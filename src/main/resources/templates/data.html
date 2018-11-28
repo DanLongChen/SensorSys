@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/D3/d3.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+var num=[1,2,3,4];
+num.push(1);//添加到末尾
+num.splice(2,20);//将数值插入到指定位置
+unshift；//添加到数组开头
+pop//删除最后一位
+shift//删除最前一位
+d3.shuffle(num);//重新排序
+d3.merge([num,[1,2,3]]);
+console.log(d3.pairs(num));//返回领结数组对
+console.log(d3.range(10));//返回等差数组
+console.log(d3.zip([1,2,3],["zhandgan","sa","bi"],[true,false,false]));//用多个数组来制造数组
+
+//map
+var dataSet=[{id:1,name:"zhangsan"},{id:2,name:"lisi"}];
+var map=d3.map(dataSet,function(d){
+	return d.id;//以id作为key
+});
+map.has(1);
+map.get(1);
+map.set(1,{id:1,name:"lisi"});
+map.keys();
+map.values();
+map.entries();
+map.forEach(function(key,value){
+	console.log(key);
+	console.log(value);
+});
+map.empty();
+map.size();
+//set
+d3.set(dataSet);
+</script>
+</body>
+</html>

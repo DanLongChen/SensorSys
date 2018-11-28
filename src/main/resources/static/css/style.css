@@ -1,0 +1,291 @@
+@charset "UTF-8";
+div.bar{
+	display:inline-block;
+	width:20px;
+	height:30px;
+	background-color:teal;
+}
+p.bar{
+	backgroud-color:teal;
+}
+
+.axis path,
+.axis line{
+	fill:none;
+	stroke:black;
+	shape-rendering:crispEdges;
+}
+.axis text{
+	font-family:sans-serif;
+	font-size:11px;
+}
+.axisLine path,
+.axisLine line{
+	fill:none;
+	stroke:black;
+	opacity:0.1;
+}
+.axisLine text{
+	font-family:sans-serif;
+	font-size:10px;
+}
+.button{
+	position:relative;
+	width:200px;
+	height:50px;
+	margin-top:35px;
+	background-color:;
+	border-radius:10px;
+	z-index:10;
+	display:inline-block;
+	font-size:20px;
+}
+.Cbutton{
+	position:relative;
+	width:50px;
+	height:25px;
+	margin-top:20px;
+	background-color:;
+	border-radius:10px;
+	font-size:15px;
+}
+.chess{
+	position:absolute;
+	width:240px;
+	height:265px;
+	background-color:#123748;
+	/*opacity:0.3;*/
+	margin-left:260px;
+	margin-top:300px;
+	text-align:left;
+	padding-left:10px;
+	z-index:10;
+}
+
+.cp{
+	margin-top:10px;
+	color:white;
+	font-size:20;
+	
+}
+.cpa{
+	margin-top:-35px;
+	margin-left:120px;
+	color:white;
+	font-size:20;
+	
+}
+.div{
+	position:absolute;
+	width:250px;
+	height:280px;
+	background-color:#123748;
+	opacity:0.3;
+	margin-left:260px;
+	margin-top:10px;
+	z-index:0;
+	text-align:center;
+	float:right;
+}
+.inputs{
+	position:absolute;
+	margin-top:-35px;
+	margin-left:80px;
+	width:30px;
+}
+.inputsa{
+	position:absolute;
+	margin-top:-35px;
+	margin-left:200px;
+	width:30px;
+}
+.inputsb{
+	position:absolute;
+	margin-top:-35px;
+	margin-left:150px;
+	width:80px;
+}
+.inputsc{
+	position:absolute;
+	margin-top:-35px;
+	margin-left:170px;
+	width:60px;
+}
+.loop{
+	fill:none;
+	stroke:black;
+	stroke-width:1;
+	stroke-opacity:0.3;
+	stroke-dasharray:5,2;/*第一个参数表示长度，第二个表示间距*/
+}
+.loop-f{
+	fill:none;
+	stroke:none;
+	stroke-opacity:0;
+}
+.path{
+	/*stroke:#c49c94;*/
+	stroke-dasharray:5,2;
+	stroke-width:1;
+	stroke-opacity:0.5;
+}
+
+.parent{
+	/*position:fixed;
+	right:10%;*/
+	position:absolute;
+	margin-left:1200px;
+	margin-top:40px;
+	width:450px;
+	height:640px;
+	
+}
+.Pmessage{
+	position:absolute;
+	width:500px;
+	height:230px;
+	background-color:#123748;
+	opacity:0.3;
+	margin-left:0px;
+	margin-top:575px;
+	padding-left:10px;
+}
+.point{
+	fill:white;
+	stroke:black;
+	stroke-width:4;
+	stroke-opacity:0.5;
+	stroke-dasharray:0.5,0.5;
+}
+.pT{
+	color:white;
+	margin:3px;
+	margin-left:0px;
+}
+.rect{
+	width:8;
+	height:8;
+}
+.Sbutton{
+	position:absolute;
+	width:100px;
+	height:40px;
+	/*margin-top:10px;*/
+	margin-left:60px;
+	background-color:;
+	border-radius:10px;
+	z-index:10;
+	display:inline-block;
+	font-size:20px;
+}
+
+.show{
+	position:absolute;
+	width:250px;
+	height:265px;
+	background-color:#123748;
+	/*opacity:0;*/
+	margin-left:260px;
+	margin-top:300px;
+	text-align:left;
+	padding-left:10px;
+	z-index:0;
+}
+.show-p{
+	color:white;
+	font-size:12px;
+}
+.sp{
+	color:white;
+	font-size:10;
+	margin-top:-35px;
+	margin-left:118px;
+}
+.speed{
+	position:absolute;
+	width:240px;
+	height:280px;
+	background-color:#123748;
+	margin-left:0px;
+	margin-top:10px;
+	/*text-align:left;*/
+	padding-left:10px;
+}
+
+.sselected{
+	position:absolute;
+	margin-left:70px;
+	margin-top:-35px;/*margin是可以取负值的。例如margin-top：30px，这是取得正值，代表头部的外边距为30像素，就是头部距离相邻元素为30px；
+如果取得值为负值的话，就代表元素向头部移动30px。也就是头部距离相邻元素减小30px。*/
+}
+.sselecteda{
+	position:absolute;
+	margin-left:190px;
+	margin-top:-35px;/*margin是可以取负值的。例如margin-top：30px，这是取得正值，代表头部的外边距为30像素，就是头部距离相邻元素为30px；
+如果取得值为负值的话，就代表元素向头部移动30px。也就是头部距离相邻元素减小30px。*/
+}
+
+.svg{
+	width:100%;
+	height:100%;
+}
+
+
+.text{
+	position:absolute;
+	width:240px;
+	height:265px;
+	background-color:#123748;
+	opacity:0.3;
+	margin-left:0;
+	margin-top:300px;
+	text-align:left;
+	padding-left:10px;
+}
+
+.textarea{
+	resize:none;
+	width:430px;
+	height:130px;
+	margin:0 auto;
+	border:0;
+}
+.textareaM{
+	width:200px;
+	height:130px;
+	margin:0 auto;
+	border:0;
+	font-size:14px;
+}
+.tooltip{
+	position:absolute;
+	width:120px;
+	height:auto;
+	background-color:white;
+	font-family:sans-serif;
+	font-size:12px;
+	text-align:center;
+	border-style:solid;
+	border-width:1px;
+	border-radius:6px;
+	opacity:0;
+}
+
+.Wbutton{
+	position:relative;
+	width:50px;
+	height:25px;
+	margin-top:0px;
+	background-color:;
+	border-radius:10px;
+	font-size:15px;
+}
+
+
+
+#b5{
+	text-align:center;
+}
+#divStyle{
+	
+}

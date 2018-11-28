@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../js/D3/d3.min.js"></script>
+<link rel="stylesheet" href="../css/style.css" type="text/css">
+<style type="text/css">
+</style>
+</head>
+<body>
+<script type="text/javascript">
+//d3.select("body").append("p").text("lll");
+/*var dataset;
+d3.csv("food.csv",function(error,data){//回调函数，在csv加载完成之后再执行函数，因此我们设计一个全局变量来进行监控
+	if(error){
+		console.log(error);
+	}else{
+		dataset=data;
+		console.log(data)
+		//set();
+		//move();
+	}
+});
+/*d3.json("water.json",function(error,json){
+	console.wrire(json)
+});
+*/
+var dataset=[];
+for(var i=0;i<10;i++){
+	var newNumber=Math.random()*30;
+	dataset.push(newNumber);
+}
+d3.select("body")
+  .selectAll("p")
+  .data(dataset)
+  .enter()
+  .append("p")
+  .text(function(data){return data;})
+  .style("color",function(d){
+	  if(d>5){
+		  return "red";
+	  }else{
+		  return "grenn";
+	  }
+  });//data()根据数值循环5遍,逐个数据会往下传递
+//enter(),分析数据和上面的dom，如果数据比上面对应的元素多，则创建一个占位符，占位符的引用交给下一个方法,匿名函数（没有名字），匿名函数先执行然后把结果交给text
+d3.select("body")
+  .selectAll("div")
+  .data(dataset)
+  .enter()
+  .append("div")
+  .classed("bar",false)
+  .attr("class","bar")//指定样式
+  .style("height",function(d){
+	  var barHeight=d*5;
+	  return barHeight+"px";
+  })
+  .style("margin-right","2px")
+  ;
+</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SVG</title>
+<script type="text/javascript" src="../js/D3/d3.js"></script>
+<link rel="stylesheet" href="../css/style.css" type="text/css">
+<style type="text/css">
+
+</style>
+</head>
+<body bgcolor="#999">
+<script type="text/javascript">
+var height=630;
+var width=1264;//svg以像素为单位
+var xScale=d3.scaleLinear()
+				   .domain([0,1264])
+				   .range([0,1264]);
+var yScale=d3.scaleOrdinal()//处理序数
+				   .domain(d3.range(100));//产生0-99的序数
+var dataSet=[];
+//dataSet.shift();//从数据集删除一个值				   
+for(var i=0;i<30;i++){
+	var dataNumber=Math.random()*100;
+	dataSet.push(dataNumber);
+}
+/*d3.select("body")
+  .selectAll("p")
+  .data(dataSet)
+  .enter()
+  .append("p")
+  .text(function(d){
+	  return "data value:"+d;
+  }) 
+  .attr("class","bar");*/
+var svg=d3.select("body")
+		  .append("svg")
+		  .attr("width",width)
+		  .attr("height",height);
+svg.append("g")//把所有元素封装到一个组内
+   .attr("class","axis")
+   .classed("axis",true)
+   .attr("transform","translate(0,"+(height-20)+")")//移动位置
+   //.ticks(50)划分精度
+   .call(
+		   d3.axisTop(xScale)//把g交给axis函数，也就是在g内生成数轴,采用比例，和位置
+   );
+/*svg.append("g")
+   .attr("class","axis")
+   .call(d3.axisRight(yScale));*///位置
+var circle=svg.append("g").attr("class","g1").selectAll("circle")
+			  .data(dataSet)
+			  .enter()
+			  .append("circle");
+circle.attr("class","circle").attr("cx",function(data,i){//i是当前元素的索引值
+	return (i*10)+data;
+	})
+	.attr("cy",function(data){
+		return data*5;
+	})
+	.attr("r",function(d){
+		return 10;
+	})
+	.attr("fill","#FFFF")
+	.attr("stroke","black")
+	.attr("stroke-width","1")
+	/*.on("click",function(d){
+		alert("click"+d);
+	})*/
+	.on("mouseover",function(data){
+		d3.select(this)
+		  .attr("fill","orange")
+		  .attr("r",20);
+	})
+	.on("mouseout",function(){
+		d3.select(this)
+		  .attr("fill","green")
+		  .attr("r",10);
+	});
+svg.select(".g1").selectAll("text")
+   .data(dataSet)
+   .enter()
+   .append("text")
+   .transition()
+   .delay(1000)
+   .duration(5000)//过度函数
+   .ease(d3.easeBounce)//linear没有加速和减速的变化，circle（逐渐进入并加速然后突然停止），elastic（有弹性），bounce（反复弹跳）
+   .text(function(data){
+	   return parseInt(data);
+   })
+   .attr("x",function(data,i){
+	   return (i*10)+data-6;
+   })
+   .attr("y",function(data){
+	   return data*5+4;
+   })
+   .attr("font-family","sans-serif")
+   .attr("font-size","10px")
+   .attr("fill","olive");
+d3.selectAll("circle").on("click",function(){
+	
+	dataSet.splice(0,dataSet.length);
+	for(var i=0;i<100;i++){
+		var a=parseInt(Math.random()*100);
+		dataSet.push(a);
+	}
+	svg.selectAll("text")
+	   .data(dataSet)
+	   /*.transition()
+	   .duration(1000)
+	   .each("start",function(){
+		   d3.select(this).attr("fill","red");//开始的时候执行的动作
+	   })*/
+	   .text(function(data){
+		   return parseInt(data);
+	   });
+});
+//比例尺,输入比例，输出比例，对于输入点转化比例
+/*var w=10,h=100;//定义输出的点的位置的大小
+var data=[[0,2],[12,7],[9,10]];
+var xScale=d3.scaleLinear()
+			       .domain([0,d3.max(data,function(d){
+			    	   return d[0];//比较二维数组的第一个元素
+			       })])
+			       .range([0,w]);
+var yScale=d3.scaleLinear()
+				   .domain([0,d3.max(data,function(d){
+					   return d[1];
+				   })])
+				   .range([0,h]);
+var cy=function(d){
+	return yScale(d[1]);
+}*/
+//以下是学习的部分
+d3.select("p").style("color":"red","font-size":"30px").attr("class","red color").classed("red",false);//若只有第一个值则返回该属性的值
+d3.select("#fname").property("value").property("value","zhangsan");//使用第二个值就可以给value赋值，行内属性
+d3.select("p").text("123").text();//若里面为空则返回text的值
+d3.select("p").html();//获取p内部的html信息
+d3.select("body").append("p").text("123");//在末尾添加
+d3.select("body").insert("p","#pp").text("123");//在body中id为pp的元素前面添加p元素
+d3.select("#pp").remove();//删除id为pp的元素
+d3.selectAll("p").datum("7").text(function(d,i){return d+" "+i;});//给选择集的每一个元素绑定相同的数据7
+d3.selectAll("p").data(dataSet).enter();//给选择集的每个元素依次附上数组中的数值,为多余的位置预留元素位置
+//数组个数>元素个数（enter）添加缺少的元素，数组个数==元素个数(update),数组个数<元素个数（exit）删除多余的元素
+var dataSet=[{"id":"1","name":"zhangsan"}];
+p.data(dataSet).text(function(d){return d.id+" "+d.name});
+
+selection.filter(function(d,i){
+	if(d>10)
+		return true;
+	else
+		return false;
+});//过滤器
+
+selection.sort(function(a,b){
+	return b-a;//选择集顺序
+})
+
+var person=[{"id":"123","name":"zhangsan"}];
+var p=d3.select("body").selectAll("p");
+p.data(person).each(function(d,i){
+	d.age=20;//each可以对选择集个元素分别处理，这里添加了age属性
+}).text(function(d,i){
+	return d.id+" "+d.age+" "+d.name;//后面就可以直接用age
+})
+
+d3.select("body").selectAll("p").call(myfun);//call将选择集自身传递给function函数
+function myfun(selection){
+	selection.attr("color","red");
+}
+
+var number=[3,2,6,8,1,0,9];
+number.sort(d3.ascending);//生序排序
+number.sort(d3.descending);//降序排序
+
+//求值
+var min=d3.min(number,function(d,i){
+	return d*3;//先做处理，再求最小值----3；
+})；
+var max=d3.max(number,function(d,i){
+	return d-1;//最大值-----8；
+});
+var extend=d3.extend(number,function(d,i){
+	return d%7;//返回最大值和最小值【0，6】
+})
+var number=d3.sum(number);//求和
+var mean=d3.mean(number);//求平均值
+var d3.variance(number);//求方差
+var d3.deviation(number);//求标准差
+</script>
+</body>
+</html>
