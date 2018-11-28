@@ -15,7 +15,7 @@ public class GAFitness {
         if(chromosome==null){
             return;
         }
-        GADecode.getScore(chromosome);
+        GADecode.getScore(chromosome);//这里会写入染色体自带的score字段
     }
     public static int getAllFitness(List<Chromosome> chromosomes){//全部染色体适应度
         int sum=0;

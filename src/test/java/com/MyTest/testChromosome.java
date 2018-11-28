@@ -1,18 +1,20 @@
 package com.MyTest;
 
 import com.sensor.GATools.GADecode;
-import com.sensor.GATools.GASelection;
+import com.sensor.GATools.GAMutation;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
+import sun.swing.BakedArrayList;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by DanLongChen on 2018/11/28
+ * Created by DanLongChen on 2018/11/27
  **/
-public class test {
-    public static void main(String[] args) {//测试染色体选择模块
+public class testChromosome {//测试染色体变异的情况
+    public static void main(String[] args) {
         List<Chromosome> list = new ArrayList<Chromosome>();
         for(int i=0;i<2;i++){
             Chromosome temp=new Chromosome(i,0.09);
@@ -21,12 +23,13 @@ public class test {
                 gene.Init();
                 temp.list.add(gene);
             }
-            GADecode.getScore(temp);
             list.add(temp);
         }
-        GADecode.getAllScore(list);
-        GASelection selection=new GASelection();
-        selection.setList(list);
-        selection.startSelection();
+        System.out.println(list.toString());
+
+        GAMutation.doMutation(list,1);
+        System.out.println(list.toString());
+        System.out.println(GADecode.getScore(list.get(0)));
+
     }
 }

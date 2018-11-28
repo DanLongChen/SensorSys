@@ -15,7 +15,7 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
         List<Chromosome> newList=new ArrayList<Chromosome>(list);
         for(Chromosome chromosome:list){
             int position=(int)Math.floor(Math.random()*chromosome.getNlist().size());//获得邻居队列中的染色体
-            doSingleCross(newList,chromosome,chromosome.getNlist().get(position),crossRatio);//参数说明（新的染色体数组，）
+            doSingleCross(newList,chromosome,list.get(GAFindChromosomeById.findById(list,position)),crossRatio);//参数说明（新的染色体数组，）
         }
     }
     public void doSingleCross(List<Chromosome> newList,Chromosome num1,Chromosome num2,double crossRatio){

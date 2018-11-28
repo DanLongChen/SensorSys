@@ -1,5 +1,6 @@
 package com.sensor.entity;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,78 +11,89 @@ import org.springframework.stereotype.Component;
  * @author:DanLongChen
  * @versioin:2018年11月14日下午2:51:31
  **/
-public class Chromosome {// 表示一条染色体
-	public int id = 0;// 染色体ID
-	public List<Gene> list = new ArrayList<Gene>();// 染色体中的基因组
-	public double ratio;// 染色体变异率
-	public int score = 0;// 适应度值
-	public List<Chromosome> Nlist = new ArrayList<Chromosome>();// 染色体的邻居队列
-	public List<Double> trust=new ArrayList<Double>();//邻居的信赖域列表
+public class Chromosome implements Serializable{// 表示一条染色体
+    public int id = 0;// 染色体ID
+    public List<Gene> list = new ArrayList<Gene>();// 染色体中的基因组
+    public double ratio;// 染色体变异率
+    public int score = 0;// 适应度值
+    public List<Integer> Nlist = new ArrayList<Integer>();// 染色体的邻居队列(存储染色体的ID)
+    public List<Double> trust = new ArrayList<Double>();//邻居的信赖域列表
 
-	public Chromosome(int id, double ratio) {
-		this.id = id;
-		this.ratio = ratio;
-	}
+    public Chromosome(int id, double ratio) {
+        this.id = id;
+        this.ratio = ratio;
+    }
 
-	public Chromosome clone(){
-		Chromosome clone=new Chromosome(this.id,this.ratio);
-		clone.setList(this.getList());
-		clone.setScore(this.getScore());
-		clone.setNlist(this.getNlist());
-		return clone;
-	}
+    public Chromosome clone() {//当前这个只是浅层复制
+        Chromosome clone = new Chromosome(this.id, this.ratio);
+        clone.setList(this.getList());
+        clone.setScore(this.getScore());
+        clone.setNlist(this.getNlist());
+        return clone;
+    }
 
-	@Override
-	public String toString() {
-		return list.toString();
-	}
+    @Override
+    public String toString() {
+        return "id:" + id + " ratio:" + ratio + " score:" + score + " " + list.toString() + " "+Nlist.toString()+"\n";
+    }
 
-	/* ###################getset##################### */
-	public List<Gene> getList() {
-		return list;
-	}
+    public Chromosome deepClone() throws IOException, ClassNotFoundException {//深度复制
+        Chromosome clone = null;
+        ByteArrayOutputStream osrc = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(osrc);
+        out.writeObject(this);
+        ByteArrayInputStream isrc = new ByteArrayInputStream(osrc.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(isrc);
+        clone = (Chromosome) in.readObject();
+        return clone;
+    }
 
-	public void setList(List<Gene> list) {
-		this.list = list;
-	}
+    /* ###################getset##################### */
+    public List<Gene> getList() {
+        return list;
+    }
 
-	public double getRatio() {
-		return ratio;
-	}
+    public void setList(List<Gene> list) {
+        this.list = list;
+    }
 
-	public void setRatio(double ratio) {
-		this.ratio = ratio;
-	}
+    public double getRatio() {
+        return ratio;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public void setRatio(double ratio) {
+        this.ratio = ratio;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public int getScore() {
-		return score;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setScore(int score) {
-		this.score = score;
-	}
+    public int getScore() {
+        return score;
+    }
 
-	public List<Chromosome> getNlist() {
-		return Nlist;
-	}
+    public void setScore(int score) {
+        this.score = score;
+    }
 
-	public void setNlist(List<Chromosome> nlist) {
-		Nlist = nlist;
-	}
+    public List<Integer> getNlist() {
+        return Nlist;
+    }
 
-	public List<Double> getTrust() {
-		return trust;
-	}
+    public void setNlist(List<Integer> nlist) {
+        Nlist = nlist;
+    }
 
-	public void setTrust(List<Double> trust) {
-		this.trust = trust;
-	}
+    public List<Double> getTrust() {
+        return trust;
+    }
+
+    public void setTrust(List<Double> trust) {
+        this.trust = trust;
+    }
 }

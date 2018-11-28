@@ -18,13 +18,11 @@ public class GAMutation {
             Gene gene=chromosome.getList().get(geneListPoint);
             int genePoint=(int)Math.floor(gene.getList().size()*Math.random());//寻找基因中需要变异的基因位
             boolean temp=gene.getList().get(genePoint);
-            System.out.println(temp);
             if(temp){
                 gene.getList().set(genePoint,false);
             }else{
                 gene.getList().set(genePoint,true);
             }
-            System.out.println(listPoint+" "+geneListPoint+" "+genePoint);
         }else{
             return;
         }

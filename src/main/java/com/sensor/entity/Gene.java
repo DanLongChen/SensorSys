@@ -1,7 +1,9 @@
 package com.sensor.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @author:DanLongChen
  * @versioin:2018年11月14日下午2:59:36
  **/
-public class Gene {// 表示一个基因
+public class Gene implements Serializable {// 表示一个基因
 	public List<Boolean> list=new ArrayList<Boolean>();// 基因的bit位
 	public int GeneIn = 0;// 输入链路数量
 	public int GeneOut = 0;// 输出链路数量
@@ -20,6 +22,11 @@ public class Gene {// 表示一个基因
 		this.GeneOut=out;
 	}
 	/* ##############getset############### */
+
+	@Override
+	public String toString() {
+		return Arrays.toString(list.toArray());
+	}
 
 	public List<Boolean> getList() {
 		return list;
