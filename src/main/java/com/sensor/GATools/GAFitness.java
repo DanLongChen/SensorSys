@@ -10,20 +10,24 @@ import java.util.List;
  **/
 @Component
 public class GAFitness {
-    public static void getSigleFitness(Chromosome chromosome){//单个染色体适应度
-        int sum=0;
-        if(chromosome==null){
+    public static void sigleFitness(Chromosome chromosome) {//计算单个染色体适应度
+        if (chromosome == null) {
             return;
         }
         GADecode.getScore(chromosome);//这里会写入染色体自带的score字段
     }
-    public static int getAllFitness(List<Chromosome> chromosomes){//全部染色体适应度
-        int sum=0;
-        if(chromosomes==null){
+
+    public static void allFitness(List<Chromosome> list) {//计算染色体数组的适应度
+        GADecode.getAllScore(list);
+    }
+
+    public static int getAllFitness(List<Chromosome> chromosomes) {//全部染色体适应度
+        int sum = 0;
+        if (chromosomes == null) {
             return sum;
         }
-        for(Chromosome chromosome:chromosomes){
-            sum+=chromosome.getScore();
+        for (Chromosome chromosome : chromosomes) {
+            sum += chromosome.getScore();
         }
         return sum;
     }

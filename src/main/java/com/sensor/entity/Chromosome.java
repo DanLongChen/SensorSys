@@ -2,10 +2,7 @@ package com.sensor.entity;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import org.springframework.stereotype.Component;
 
 /**
  * @author:DanLongChen
@@ -17,7 +14,7 @@ public class Chromosome implements Serializable{// 表示一条染色体
     public double ratio;// 染色体变异率
     public int score = 0;// 适应度值
     public List<Integer> Nlist = new ArrayList<Integer>();// 染色体的邻居队列(存储染色体的ID)
-    public List<Double> trust = new ArrayList<Double>();//邻居的信赖域列表
+    public List<Double> trust = new ArrayList<Double>();//邻居的信赖域列表(与邻居队列一一对应)
 
     public Chromosome(int id, double ratio) {
         this.id = id;
@@ -96,4 +93,6 @@ public class Chromosome implements Serializable{// 表示一条染色体
     public void setTrust(List<Double> trust) {
         this.trust = trust;
     }
+
+
 }

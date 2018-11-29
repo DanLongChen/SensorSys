@@ -11,10 +11,7 @@ import java.util.List;
  * Created by DanLongChen on 2018/11/26
  **/
 public class GACopy {//染色体复制
-    private List<Chromosome> beforeCopy;
-    private List<Chromosome> afterCopy;
-
-    public void doCopy() {
+    public static void doCopy(List<Chromosome> beforeCopy,List<Chromosome> afterCopy) {
         afterCopy.addAll(GADeepCopy.deepCopyList(beforeCopy));
     }
 
@@ -32,10 +29,7 @@ public class GACopy {//染色体复制
             list.add(temp);
         }
         List<Chromosome> newList=new ArrayList<Chromosome>();
-        GACopy copy = new GACopy();
-        copy.setBeforeCopy(list);
-        copy.setAfterCopy(newList);
-        copy.doCopy();
+        GACopy.doCopy(list,newList);
         System.out.println(list.toString());
         System.out.println(newList.toString());
         if(list.get(0).getList().get(0).getList().get(0)){
@@ -45,21 +39,5 @@ public class GACopy {//染色体复制
         }
         System.out.println(list.toString());
         System.out.println(newList.toString());
-    }
-
-    public List<Chromosome> getBeforeCopy() {
-        return beforeCopy;
-    }
-
-    public void setBeforeCopy(List<Chromosome> beforeCopy) {
-        this.beforeCopy = beforeCopy;
-    }
-
-    public List<Chromosome> getAfterCopy() {
-        return afterCopy;
-    }
-
-    public void setAfterCopy(List<Chromosome> afterCopy) {
-        this.afterCopy = afterCopy;
     }
 }

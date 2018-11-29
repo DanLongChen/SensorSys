@@ -1,9 +1,7 @@
 package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
-import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,10 +14,10 @@ public class GAFindChromosomeById {
         }
         for(int i=0;i<list.size();i++){
             Chromosome temp=list.get(i);
-            if(temp.getId()==id){
+            if(temp.getId()==id){//找到的情况
                 return i;
             }
         }
-        return Integer.MAX_VALUE;
+        return Integer.MAX_VALUE;//没找到或者list为空的情况
     }
 }

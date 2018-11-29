@@ -1,6 +1,8 @@
 package com.sensor.Generate;
 
 import com.sensor.GATools.GADecode;
+import com.sensor.GATools.GAFindChromosomeById;
+import com.sensor.GATools.GAFitness;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,8 @@ public class GASimulation extends Simulation {
     private double crossRatio = 0.8;//交叉率
     private int maxGeneration = 500;//最大代数
     private double neighborRatio = 0.2;//邻居列表占全体种群的比例
+    private double TK=90.0;//初始温度
+    private double getCrossRatio=0.88;//温度下降比例
 
     private void init() {//初始化主类
         initPopulation(mList, mPopulation, 6, mMutationRatio);//初始化每个种群
@@ -30,15 +34,19 @@ public class GASimulation extends Simulation {
          */
         initNeighbor(mList, neighborRatio);
         initNeighbor(fList, neighborRatio);
-
     }
     @Test
     public void doGA(){
         GASimulation gaSimulation = new GASimulation();
-        gaSimulation.init();
-        System.out.println(gaSimulation.fList);
-        GADecode.getScore(gaSimulation.fList.get(0));
-        System.out.println(gaSimulation.fList.get(0).getScore());
+        gaSimulation.init();//初始化阶段
+        int dGeneration=0;
+        while(dGeneration<maxGeneration){
+            GAFitness.allFitness(mList);//计算适应度
+            GAFitness.allFitness(fList);
+
+
+        }
+
     }
 
     public static void main(String[] args) {
@@ -62,12 +70,12 @@ public class GASimulation extends Simulation {
         for (Chromosome chromosome : list) {
             for (int i = 0; i < neighborNum; i++) {
                 int point = (int) Math.floor(Math.random() * list.size());
-                addNeighborToChromosome(chromosome, list.get(point));
+                addNeighborToChromosome(chromosome, point);
             }
         }
     }
 
-    private void addNeighborToChromosome(Chromosome chromosomeA, Chromosome chromosomeB) {
-        chromosomeA.getNlist().add(chromosomeB);
+    private void addNeighborToChromosome(Chromosome chromosomeA, int point) {
+        chromosomeA.getNlist().add(point);
     }
 }
