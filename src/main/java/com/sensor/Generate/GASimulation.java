@@ -1,8 +1,8 @@
 package com.sensor.Generate;
 
-import com.sensor.GATools.GADecode;
-import com.sensor.GATools.GAFindChromosomeById;
+import com.sensor.GATools.GACross;
 import com.sensor.GATools.GAFitness;
+import com.sensor.GATools.GASelection;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
 import org.junit.jupiter.api.Test;
@@ -25,6 +25,7 @@ public class GASimulation extends Simulation {
     private double neighborRatio = 0.2;//邻居列表占全体种群的比例
     private double TK=90.0;//初始温度
     private double getCrossRatio=0.88;//温度下降比例
+    private double K=0.9;//是否开启精英的阈值
 
     private void init() {//初始化主类
         initPopulation(mList, mPopulation, 6, mMutationRatio);//初始化每个种群
@@ -40,9 +41,14 @@ public class GASimulation extends Simulation {
         GASimulation gaSimulation = new GASimulation();
         gaSimulation.init();//初始化阶段
         int dGeneration=0;
+        GASelection selection = new GASelection();
+        GACross corss=new GACross();
         while(dGeneration<maxGeneration){
             GAFitness.allFitness(mList);//计算适应度
             GAFitness.allFitness(fList);
+
+            selection.setFlag(false);//染色体选择，验证是否开启了精英发法则
+            selection.duSelection();
 
 
         }

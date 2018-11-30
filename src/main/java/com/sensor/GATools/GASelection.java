@@ -1,7 +1,6 @@
 package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
-import com.sensor.entity.Gene;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @Component
 public class GASelection {//染色体选择（赌轮选择）
     private List<Chromosome> oldList = new ArrayList<Chromosome>();//染色体数组
-    private List<Chromosome> newList = new ArrayList<Chromosome>();
+    //    private List<Chromosome> newList = new ArrayList<Chromosome>();
     private double sum = 0;//适应度总和
     private double gSum = 0;//归一化的sum
     private List<Double> singleRatioList = new ArrayList<Double>();//个体选择概率
@@ -27,7 +26,8 @@ public class GASelection {//染色体选择（赌轮选择）
     /**
      * 赌轮选择法
      */
-    public void duSelection() {
+    public void duSelection() {//需设置新旧染色体数组，是否开启精英原则
+        List<Chromosome> newList = new ArrayList<Chromosome>();
         int num = oldList.size();
         int bestScore = oldList.get(0).getScore();//得到最好的适应度值
         int best = 0;//最好适应度值的染色体在list中的下标
@@ -67,6 +67,8 @@ public class GASelection {//染色体选择（赌轮选择）
                 }
             }
         }
+//        oldList.clear();
+        oldList = GADeepCopy.deepCopyList(newList);
 
     }
 
@@ -74,6 +76,7 @@ public class GASelection {//染色体选择（赌轮选择）
      * 锦标赛选择法
      */
     public void jinSelection() {
+        List<Chromosome> newList = new ArrayList<Chromosome>();
         int num = oldList.size();
         int bestScore = oldList.get(0).getScore();//得到最好的适应度值
         int best = 0;//最好适应度值的染色体的ID
@@ -97,47 +100,83 @@ public class GASelection {//染色体选择（赌轮选择）
                 int get = (int) Math.floor(Math.random() * oldList.size());//随机选择个体
                 temp.add(oldList.get(get));
             }
-            Collections.sort(temp, new Comparator<Chromosome>() {
+            Collections.sort(temp, new Comparator<Chromosome>() {//使用sort排序的话原list会乱掉，所以使用了一个中间list来执行
                 @Override
                 public int compare(Chromosome o1, Chromosome o2) {
-                    return o1.getScore()>o2.getScore()?1:o1.getScore()==o2.getScore()?0:-1;
+                    return o1.getScore() > o2.getScore() ? 1 : o1.getScore() == o2.getScore() ? 0 : -1;
                 }
             });
             newList.add(temp.get(0));
             temp.clear();
         }
+//        oldList.clear();
+//        oldList = GADeepCopy.deepCopyList(newList);
+        oldList=newList;
     }
-    public void neiborCare(List<Chromosome> list,double neiborRatio){
-        int num=(int) Math.floor(list.size()*neiborRatio);
-        for(Chromosome chromosome:list){
-            for (int i:chromosome.getNlist()){
-                if(GAFindChromosomeById.findById(list,i)==Integer.MAX_VALUE){//说明要找的linjuID没在对应的列表里面，那么需要移除
+
+    /**
+     * 更新邻居列表
+     *
+     * @param list
+     * @param neiborRatio
+     */
+    public void neiborCare(List<Chromosome> list, double neiborRatio) {//调整染色体的邻居队列和信赖值（在染色体选择结束之后进行）
+        int num = (int) Math.floor(list.size() * neiborRatio);
+        int number = 0;
+        for (Chromosome chromosome : list) {
+            for (int i=0;i<chromosome.getNlist().size();i++) {//首先查看邻居队列中的染色体还能不能找到（不能找到则剔除）
+                if (GAFindChromosomeById.findById(list, chromosome.getNlist().get(i)) == Integer.MAX_VALUE) {//说明要找的邻居ID没在对应的列表里面，那么需要移除
                     chromosome.getNlist().remove(i);
-                }else{
-                    continue;
+                    chromosome.getTrust().remove(i);
+                } else {//能找到的情况下，调整邻居列表中的ID值（因为原染色体数组中的ID值在这一代中发生了改变）
+                    int changeNeiborID=chromosome.getNlist().get(i);
+                    chromosome.getNlist().set(i,GAFindChromosomeById.findById(list,changeNeiborID));//把第i个值的ID改变掉(这里返回的是为那个ID的染色体在数组中的下标)
                 }
             }
+            /**
+             * 这里染色体ID先不改变，因为移除邻居队列中的ID值的时候需要判断ID
+             */
+//            chromosome.setId(number++);
+            if (chromosome.getNlist().size() < num) {//邻居列表的个数不够的情况(添加元素，直到到达指定的个数)
+                while (chromosome.getNlist().size()<num){
+                    int neiborAddPoint=(int) Math.floor(Math.random()*list.size());
+                    if(chromosome.getNlist().contains(neiborAddPoint) || neiborAddPoint==chromosome.getId()){//若有重复则重新插入
+                        continue;
+                    }
+                    chromosome.getNlist().add(neiborAddPoint);
+                    chromosome.getTrust().add(1.0);
+                }
+            }
+            System.out.println(chromosome);
+        }
+        System.out.println("##############################################################");
+        for(Chromosome chromosome:list){
+            chromosome.setId(number++);
+            System.out.println(chromosome);
         }
     }
 
     @Test
     public void test() {//测试模块
         List<Chromosome> list = new ArrayList<Chromosome>();
-        GATestTools.produceData(list);
-        GADecode.getAllScore(list);
+        double neiborRatio=0.2;
+        GATestTools.produceData(list,neiborRatio);
+        System.out.println("生成的数据\n"+list.toString());
         GASelection selection = new GASelection();
-        selection.setList(list);
+        selection.setOldList(list);
         selection.setRatio(0.2);
         selection.setFlag(true);
-        selection.jinSelection();
-        System.out.println(selection.getNewList().toString());
+        selection.duSelection();
+        System.out.println("选择之后的数组\n"+selection.getOldList());
+        selection.neiborCare(selection.getOldList(),neiborRatio);
+//        System.out.println("neiborCare之后的数组"+selection.getOldList());
     }
 
-    public List<Chromosome> getList() {
+    public List<Chromosome> getOldList() {
         return oldList;
     }
 
-    public void setList(List<Chromosome> oldList) {
+    public void setOldList(List<Chromosome> oldList) {
         this.oldList = oldList;
     }
 
@@ -147,6 +186,14 @@ public class GASelection {//染色体选择（赌轮选择）
 
     public void setSum(double sum) {
         this.sum = sum;
+    }
+
+    public double getgSum() {
+        return gSum;
+    }
+
+    public void setgSum(double gSum) {
+        this.gSum = gSum;
     }
 
     public List<Double> getSingleRatioList() {
@@ -171,30 +218,6 @@ public class GASelection {//染色体选择（赌轮选择）
 
     public void setFlag(boolean flag) {
         this.flag = flag;
-    }
-
-    public List<Chromosome> getNewList() {
-        return newList;
-    }
-
-    public void setNewList(List<Chromosome> newList) {
-        this.newList = newList;
-    }
-
-    public List<Chromosome> getOldList() {
-        return oldList;
-    }
-
-    public void setOldList(List<Chromosome> oldList) {
-        this.oldList = oldList;
-    }
-
-    public double getgSum() {
-        return gSum;
-    }
-
-    public void setgSum(double gSum) {
-        this.gSum = gSum;
     }
 
     public double getRatio() {

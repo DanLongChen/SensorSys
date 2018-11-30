@@ -4,8 +4,7 @@ import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by DanLongChen on 2018/11/26
@@ -48,7 +47,7 @@ public class GADecode {//最后输出结果
         return score;
     }
 
-    public static void getAllScore(List<Chromosome> list) {
+    public static void getAllScore(List<Chromosome> list) {//计算染色体数组中的每一条染色体的适应度值
         if (list == null) {
             return;
         }
@@ -58,6 +57,15 @@ public class GADecode {//最后输出结果
             integerList.add(chromosome.getScore());
         }
 //        System.out.println(integerList.toString());
-
+    }
+    public static int getMaxScore(List<Chromosome> list){//获取染色体数组中的最大的适应度
+        List<Chromosome> temp=GADeepCopy.deepCopyList(list);
+        Collections.sort(temp, new Comparator<Chromosome>() {
+            @Override
+            public int compare(Chromosome o1, Chromosome o2) {
+                return o1.getScore()>o2.getScore()?-1:o1.getScore()==o2.getScore()?0:1;
+            }
+        });
+        return temp.get(0).getScore();
     }
 }

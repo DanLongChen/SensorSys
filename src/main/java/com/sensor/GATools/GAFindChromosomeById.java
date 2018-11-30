@@ -15,7 +15,7 @@ public class GAFindChromosomeById {
         for(int i=0;i<list.size();i++){
             Chromosome temp=list.get(i);
             if(temp.getId()==id){//找到的情况
-                return i;
+                return i;//返回最近一个找到的染色体数组的ID值
             }
         }
         return Integer.MAX_VALUE;//没找到或者list为空的情况

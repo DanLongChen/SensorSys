@@ -31,7 +31,7 @@ public class Chromosome implements Serializable{// 表示一条染色体
 
     @Override
     public String toString() {
-        return "id:" + id + " ratio:" + ratio + " score:" + score + " " + list.toString() + " "+Nlist.toString()+"\n";
+        return "id:" + id + " ratio:" + ratio + " score:" + score + " " + list.toString() + " neibor:"+Nlist.toString()+" trust:"+trust.toString()+"\n";
     }
 
     public Chromosome deepClone() throws IOException, ClassNotFoundException {//深度复制
