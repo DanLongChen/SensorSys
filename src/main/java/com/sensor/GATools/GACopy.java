@@ -18,16 +18,7 @@ public class GACopy {//染色体复制
     @Test
     public void test() {//验证深复制(要想开启测试，把private改为public)
         List<Chromosome> list = new ArrayList<Chromosome>();
-        for (int i = 0; i < 10; i++) {
-            Chromosome temp = new Chromosome(i, 0.09);
-            for (int j = 0; j < 3; j++) {
-                Gene gene = new Gene(2, 3);
-                gene.Init();
-                temp.list.add(gene);
-            }
-            GADecode.getScore(temp);
-            list.add(temp);
-        }
+        GATestTools.produceData(list,0.2);
         List<Chromosome> newList=new ArrayList<Chromosome>();
         GACopy.doCopy(list,newList);
         System.out.println(list.toString());

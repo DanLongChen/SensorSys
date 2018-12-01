@@ -11,8 +11,8 @@ import java.util.List;
 public class GATestTools {
     /***
      *
-     * @param list
-     * @param neiborRatio
+     * @param list（传入的染色体数组）
+     * @param neiborRatio（邻居队列所占全部染色体数组的比重）
      *
      * 邻居列表不能重复，也不添加自己，trust值初始化为1，随后按照信赖函数调整
      */

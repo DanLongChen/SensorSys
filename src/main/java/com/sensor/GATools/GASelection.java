@@ -22,6 +22,7 @@ public class GASelection {//染色体选择（赌轮选择）
     private List<Double> sumRatioList = new ArrayList<Double>();//累积概率
     private boolean flag = false;//表示是否开启精英原则
     private double ratio = 0.0;//锦标赛选择的时候随机选择的个体所占的比例
+    private double neiborRatio=0.2;//邻居队列长度（这里设置默认值为0.2，也可以自己传入来设置）
 
     /**
      * 赌轮选择法
@@ -68,7 +69,9 @@ public class GASelection {//染色体选择（赌轮选择）
             }
         }
 //        oldList.clear();
-        oldList = GADeepCopy.deepCopyList(newList);
+//        oldList = GADeepCopy.deepCopyList(newList);
+        oldList=newList;
+        neiborCare(this.getOldList(),neiborRatio);
 
     }
 
@@ -121,6 +124,7 @@ public class GASelection {//染色体选择（赌轮选择）
      * @param neiborRatio
      */
     public void neiborCare(List<Chromosome> list, double neiborRatio) {//调整染色体的邻居队列和信赖值（在染色体选择结束之后进行）
+        System.out.println("care之前："+list);
         int num = (int) Math.floor(list.size() * neiborRatio);
         int number = 0;
         for (Chromosome chromosome : list) {
@@ -147,13 +151,13 @@ public class GASelection {//染色体选择（赌轮选择）
                     chromosome.getTrust().add(1.0);
                 }
             }
-            System.out.println(chromosome);
         }
         System.out.println("##############################################################");
         for(Chromosome chromosome:list){
             chromosome.setId(number++);
-            System.out.println(chromosome);
+            System.out.println(chromosome.getId());
         }
+        System.out.println("care之后："+list);
     }
 
     @Test
@@ -167,8 +171,13 @@ public class GASelection {//染色体选择（赌轮选择）
         selection.setRatio(0.2);
         selection.setFlag(true);
         selection.duSelection();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("选择之后的数组\n"+selection.getOldList());
-        selection.neiborCare(selection.getOldList(),neiborRatio);
+//        selection.neiborCare(selection.getOldList(),neiborRatio);
 //        System.out.println("neiborCare之后的数组"+selection.getOldList());
     }
 

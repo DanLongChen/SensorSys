@@ -8,6 +8,12 @@ import java.util.List;
  * Created by DanLongChen on 2018/11/28
  **/
 public class GAFindChromosomeById {
+    /***
+     *
+     * @param list（染色体数组）
+     * @param id（染色体ID）
+     * @return（返回点额是染色体在数组中的下标）
+     */
     public static int findById(List<Chromosome> list,int id){
         if(list==null){
             return Integer.MAX_VALUE;

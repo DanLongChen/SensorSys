@@ -14,6 +14,9 @@ import java.util.List;
  * Created by DanLongChen on 2018/11/26
  **/
 public class GASimulation extends Simulation {
+    /***
+     * 种群控制参数
+     */
     private List<Chromosome> mList = new ArrayList<Chromosome>();//两个种群
     private List<Chromosome> fList = new ArrayList<Chromosome>();
     private int mPopulation = 10;//种群数量
@@ -22,6 +25,9 @@ public class GASimulation extends Simulation {
     private double fMutatioinRatio = 0.01;
     private double crossRatio = 0.8;//交叉率
     private int maxGeneration = 500;//最大代数
+    /***
+     * 染色体控制参数
+     */
     private double neighborRatio = 0.2;//邻居列表占全体种群的比例
     private double TK=90.0;//初始温度
     private double getCrossRatio=0.88;//温度下降比例
@@ -59,7 +65,14 @@ public class GASimulation extends Simulation {
 
     }
 
-    private void initPopulation(List<Chromosome> list, int population, int nodeNumber, double ratio) {//要初始化的种群，种群大小，传入的网络信息（这里暂时用数字表示），初始化变异率
+    /***
+     * 初始化种群
+     * @param list（种群数组）
+     * @param population（人口数量）
+     * @param nodeNumber（传入的网络信息）
+     * @param ratio（初始化变异率）
+     */
+    private void initPopulation(List<Chromosome> list, int population, int nodeNumber, double ratio) {
         for (int i = 0; i < population; i++) {//初始化公种群的染色体
             Chromosome mchromosome = new Chromosome(i, ratio);
             for (int j = 0; j < nodeNumber; j++) {
@@ -71,17 +84,23 @@ public class GASimulation extends Simulation {
         }
     }
 
+    /***
+     * 初始化种群的邻居队列和信赖域
+     * @param list（种群数组）
+     * @param neighborRatio（邻居占种群个数的比例）
+     */
     private void initNeighbor(List<Chromosome> list, double neighborRatio) {
         int neighborNum = (int) Math.round(list.size() * neighborRatio);
         for (Chromosome chromosome : list) {
             for (int i = 0; i < neighborNum; i++) {
-                int point = (int) Math.floor(Math.random() * list.size());
-                addNeighborToChromosome(chromosome, point);
+                int neibor = list.get((int) Math.floor(Math.random() * list.size())).getId();
+                addNeighborToChromosome(chromosome, neibor);
             }
         }
     }
 
     private void addNeighborToChromosome(Chromosome chromosomeA, int point) {
-        chromosomeA.getNlist().add(point);
+        chromosomeA.getNlist().add(point);//填充邻居列表，同时初始化信赖域为1
+        chromosomeA.getTrust().add(1.0);//与邻居列表是一一对应的
     }
 }
