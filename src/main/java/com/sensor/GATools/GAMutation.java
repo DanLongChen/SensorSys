@@ -17,12 +17,10 @@ public class GAMutation {
     /***
      *
      * @param list（染色体数组）
-     * @param flag（整体变异条件是否满足）
-     * @param Md（整体染色体变异率）
+     * @param Md（整体变异概率）
      * @param generation（当前代数）
-     * @param generationMax（最大代数）
      */
-    public static void doMutation(List<Chromosome> list, boolean flag,double Md,int generation,int generationMax){
+    public static void doMutation(List<Chromosome> list, double Md,int generation){
         int K=(int) (GAGetChromosomeLength.getLength(list.get(0))*0.1);
         for(Chromosome chromosome:list){//对染色体中的每一条染色体执行变异，然后调整其变异率
             double ratio=Math.random();
@@ -76,7 +74,8 @@ public class GAMutation {
     public  void test(){
         List<Chromosome> list = new ArrayList<Chromosome>();
         GATestTools.produceData(list,0.2);
-        GAMutation.doMutation(list,true,1,50,250);
+        System.out.println(list);
+        GAMutation.doMutation(list,1,50);
         System.out.println(list);
     }
 

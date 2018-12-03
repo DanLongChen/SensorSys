@@ -1,8 +1,6 @@
 package com.sensor.Generate;
 
-import com.sensor.GATools.GACross;
-import com.sensor.GATools.GAFitness;
-import com.sensor.GATools.GASelection;
+import com.sensor.GATools.*;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
 import org.junit.jupiter.api.Test;
@@ -19,21 +17,32 @@ public class GASimulation extends Simulation {
      */
     private List<Chromosome> mList = new ArrayList<Chromosome>();//两个种群
     private List<Chromosome> fList = new ArrayList<Chromosome>();
+    private List<Chromosome> tList=new ArrayList<Chromosome>();//合并之后的种群
     private int mPopulation = 10;//种群数量
     private int fPopulation = 10;
     private double mMutationRatio = 0.09;//种群基础变异率
     private double fMutatioinRatio = 0.01;
     private double crossRatio = 0.8;//交叉率
     private int maxGeneration = 500;//最大代数
+    private int zjGeneration=200;//种间杂交发生的代数
     /***
      * 染色体控制参数
      */
     private double neighborRatio = 0.2;//邻居列表占全体种群的比例
-    private double TK=90.0;//初始温度
-    private double getCrossRatio=0.88;//温度下降比例
     private double K=0.9;//是否开启精英的阈值
+    /***
+     *退火参数控制
+     */
+    private double MTK=90.0;//f种群的初始温度
+    private double FTK=90.0;//m种群的初始温度
+    private double TK=90.0;//合并之后的初始温度
+    private double TKDecline=0.88;//温度下降比例（整体有效）
+    private int TKGeneration=3;//经过多少代最大值相似则下降温度
 
-    private void init() {//初始化主类
+    /***
+     * 初始化染色体种群
+     */
+    private void init() {
         initPopulation(mList, mPopulation, 6, mMutationRatio);//初始化每个种群
         initPopulation(fList, fPopulation, 6, fMutatioinRatio);
         /*
@@ -46,17 +55,67 @@ public class GASimulation extends Simulation {
     public void doGA(){
         GASimulation gaSimulation = new GASimulation();
         gaSimulation.init();//初始化阶段
-        int dGeneration=0;
-        GASelection selection = new GASelection();
-        GACross corss=new GACross();
+        int dGeneration=0;//当前代数
+        int mSameGeneration=0;//m种群相似染色体的代数
+        int fSameGeneration=0;//f种群相似染色体的代数
+        GASelection mSelection = new GASelection();//选择器
+        GASelection fSelection = new GASelection();
+
+        outer:
         while(dGeneration<maxGeneration){
-            GAFitness.allFitness(mList);//计算适应度
             GAFitness.allFitness(fList);
+            GAFitness.allFitness(mList);//计算适应度
+            int fMaxScore=GADecode.getMaxScore(fList);
+            int mMaxScore=GADecode.getMaxScore(mList);
 
-            selection.setFlag(false);//染色体选择，验证是否开启了精英发法则
-            selection.duSelection();
 
+            if(dGeneration<zjGeneration){
+                /**
+                 * 选择过程
+                 */
+                mSelection.setOldList(mList);
+                fSelection.setOldList(fList);
+                mSelection.duSelection();//这里选用赌轮选择法
+                fSelection.duSelection();
+                /**
+                 * 交叉过程（之后计算退火温度）
+                 */
+                GACross.doCross(mList,crossRatio,MTK);
+                GACross.doCross(fList,crossRatio,FTK);
+                /**
+                 * 变异过程
+                 */
+                GAMutation.doMutation(mList,mMutationRatio,dGeneration);
+                GAMutation.doMutation(fList,fMutatioinRatio,dGeneration);
 
+                /**
+                 * 退火温度设置
+                 */
+                if(GADecode.getMaxScore(mList)==fMaxScore){
+                    mSameGeneration++;
+                    if(mSameGeneration>=TKGeneration){
+                        MTK*=TKDecline;
+                    }
+                }
+                if(GADecode.getMaxScore(fList)==mMaxScore){
+                    fSameGeneration++;
+                    if(fSameGeneration>=TKGeneration){
+                        FTK*=TKDecline;
+                    }
+                }
+            }else{
+                break outer;
+            }
+            dGeneration++;
+        }
+        /**
+         * 种内遗传完成，开始种间遗传操作
+         */
+        tList.addAll(mList);
+        tList.addAll(fList);
+        while(dGeneration<maxGeneration){
+            GAFitness.allFitness(tList);
+            dGeneration++;
         }
 
     }
@@ -101,6 +160,6 @@ public class GASimulation extends Simulation {
 
     private void addNeighborToChromosome(Chromosome chromosomeA, int point) {
         chromosomeA.getNlist().add(point);//填充邻居列表，同时初始化信赖域为1
-        chromosomeA.getTrust().add(1.0);//与邻居列表是一一对应的
+        chromosomeA.getTrust().add(1.0);//填充信赖域（与邻居列表是一一对应的）
     }
 }

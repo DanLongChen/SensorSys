@@ -6,13 +6,52 @@ import java.util.List;
 
 /**
  * Created by DanLongChen on 2018/11/26
+ * 网络节点类
  **/
 public class GANode extends Nodes {
     private int id; //唯一标示节点
-    private int data;
-    private Point point;  //节点的位置信息
-    private NodeStat nodeStat; //节点的接受和发送包的统计信息
-    private List<Packets> space; // 存储空间，每个包存储的是节点的id（可为一，可为多）
-    private List<SensorNodes> neigh; // 邻居集合
-    private int state; // 状态标志位，可为1与0，分别表示正常与损坏
+    private String data;//节点的数据
+    private Point point;//节点位置信息
+    private List<GANode> neibor;//邻居
+    private boolean state;//是否损坏
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
+    }
+
+    public List<GANode> getNeibor() {
+        return neibor;
+    }
+
+    public void setNeibor(List<GANode> neibor) {
+        this.neibor = neibor;
+    }
+
+    public boolean isState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
+    }
 }

@@ -34,14 +34,22 @@ public class Chromosome implements Serializable{// 表示一条染色体
         return "id:" + id + " ratio:" + ratio + " score:" + score + " " + list.toString() + " neibor:"+Nlist.toString()+" trust:"+trust.toString()+"\n";
     }
 
-    public Chromosome deepClone() throws IOException, ClassNotFoundException {//深度复制
+    public Chromosome deepClone() {//深度复制
         Chromosome clone = null;
-        ByteArrayOutputStream osrc = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(osrc);
-        out.writeObject(this);
-        ByteArrayInputStream isrc = new ByteArrayInputStream(osrc.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(isrc);
-        clone = (Chromosome) in.readObject();
+        try {
+            ByteArrayOutputStream osrc = new ByteArrayOutputStream();
+            ObjectOutputStream out = null;
+            out = new ObjectOutputStream(osrc);
+            out.writeObject(this);
+            ByteArrayInputStream isrc = new ByteArrayInputStream(osrc.toByteArray());
+            ObjectInputStream in = new ObjectInputStream(isrc);
+            clone = (Chromosome) in.readObject();
+            return clone;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         return clone;
     }
 

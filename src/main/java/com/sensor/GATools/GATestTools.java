@@ -24,7 +24,7 @@ public class GATestTools {
                 gene.Init();
                 temp.list.add(gene);
             }
-            GADecode.getScore(temp);
+            GADecode.setScore(temp);
 
             list.add(temp);
         }

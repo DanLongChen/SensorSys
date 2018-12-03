@@ -2,9 +2,7 @@ package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.junit.jupiter.api.Test;
-import sun.awt.geom.Crossings;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void doCross(List<Chromosome> list,double crossRatio,double TK) throws IOException, ClassNotFoundException {
+    public static void doCross(List<Chromosome> list,double crossRatio,double TK){
         List<Chromosome> newList=new ArrayList<Chromosome>(list);
         for(Chromosome chromosome:list){
             int position=chromosome.getNlist().get((int)Math.floor(Math.random()*chromosome.getNlist().size()));//获得邻居队列中的染色体
@@ -41,8 +39,7 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
      * @param crossRatio（交叉率）
      * @param TK（当前温度，这个温度由主函数来控制）
      */
-    public void doSingleCross(List<Chromosome> newList,Chromosome num1,Chromosome num2,double crossRatio,double TK,int ID){
-        try {
+    public static void doSingleCross(List<Chromosome> newList,Chromosome num1,Chromosome num2,double crossRatio,double TK,int ID){
             double ratio=Math.random();//计算当前是否可以交叉
             Chromosome num1Temp=num1.deepClone();
             if(ratio<crossRatio){
@@ -84,11 +81,6 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
     @Test
     public void test(){
@@ -97,13 +89,7 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
         GATestTools.produceData(list,neiborRatio);
         System.out.println(list);
         GACross cross = new GACross();
-        try {
-            cross.doCross(list,0.8,88.0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        cross.doCross(list,0.8,88.0);
         System.out.println(list);
     }
 }
