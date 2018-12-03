@@ -64,7 +64,7 @@ public class GAMutation {
                     int position=(int) Math.floor(Math.random()*list.size());
                     int ID=list.get(position).getId();
                     chromosome.getNlist().set(i,ID);//随机挑选染色体加入邻居队列
-                    chromosome.getTrust().set(i,1.0);//重新设置信赖域值为1.0
+                    chromosome.getTrust().set(i,-1.0);//重新设置信赖域值为1.0
                 }
             }
 

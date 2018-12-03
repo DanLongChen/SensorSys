@@ -1,6 +1,7 @@
 package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,7 @@ public class GASelection {//染色体选择（赌轮选择）
     /**
      * 赌轮选择法
      */
-    public void duSelection() {//需设置新旧染色体数组，是否开启精英原则
+    public void duSelection(List<Chromosome> oldList) {//需设置新旧染色体数组，是否开启精英原则
         List<Chromosome> newList = new ArrayList<Chromosome>();
         int num = oldList.size();
         int bestScore = oldList.get(0).getScore();//得到最好的适应度值
@@ -52,7 +53,7 @@ public class GASelection {//染色体选择（赌轮选择）
             }
         }
         if (flag) {//开启精英原则的时候最好的染色体直接进入下一代
-            newList.add(oldList.get(best));
+            newList.add(oldList.get(best).deepClone());
 //            System.out.println(oldList.get(best));
             oldList.remove(best);//同时最优染色体被禁止进入赌轮选择
             sumRatioList.remove(best);
@@ -63,15 +64,15 @@ public class GASelection {//染色体选择（赌轮选择）
             double ratio = Math.random();
             for (int j = 0; j < sumRatioList.size(); j++) {
                 if (ratio < sumRatioList.get(j)) {
-                    newList.add(oldList.get(j));
+                    newList.add(oldList.get(j).deepClone());
                     break;
                 }
             }
         }
-//        oldList.clear();
-//        oldList = GADeepCopy.deepCopyList(newList);
-        oldList=newList;
-        neiborCare(this.getOldList(),neiborRatio);
+
+        oldList.clear();//清空传入的那个地址的内容
+        oldList.addAll(newList);//再加入新内容（保证原地址的内存中有数据）
+        neiborCare(oldList,neiborRatio);
 
     }
 
@@ -91,7 +92,7 @@ public class GASelection {//染色体选择（赌轮选择）
             }
         }
         if (flag) {
-            newList.add(oldList.get(GAFindChromosomeById.findById(oldList, best)));
+            newList.add(oldList.get(GAFindChromosomeById.findById(oldList, best)).deepClone());
             oldList.remove(oldList.get(GAFindChromosomeById.findById(oldList, best)));
 //            System.out.println(newList.toString());
             num -= 1;
@@ -109,12 +110,11 @@ public class GASelection {//染色体选择（赌轮选择）
                     return o1.getScore() > o2.getScore() ? 1 : o1.getScore() == o2.getScore() ? 0 : -1;
                 }
             });
-            newList.add(temp.get(0));
+            newList.add(temp.get(0).deepClone());//需要进行深拷贝（浅拷贝的话会出现两个相同的对象同时出现在一个染色体数组的情况）
             temp.clear();
         }
-//        oldList.clear();
-//        oldList = GADeepCopy.deepCopyList(newList);
-        oldList=newList;
+        oldList.clear();
+        oldList.addAll(newList);
     }
 
     /**
@@ -124,7 +124,6 @@ public class GASelection {//染色体选择（赌轮选择）
      * @param neiborRatio
      */
     public void neiborCare(List<Chromosome> list, double neiborRatio) {//调整染色体的邻居队列和信赖值（在染色体选择结束之后进行）
-        System.out.println("care之前："+list);
         int num = (int) Math.floor(list.size() * neiborRatio);
         int number = 0;
         for (Chromosome chromosome : list) {
@@ -148,16 +147,13 @@ public class GASelection {//染色体选择（赌轮选择）
                         continue;
                     }
                     chromosome.getNlist().add(neiborAddPoint);
-                    chromosome.getTrust().add(1.0);
+                    chromosome.getTrust().add(-1.0);
                 }
             }
         }
-        System.out.println("##############################################################");
         for(Chromosome chromosome:list){
             chromosome.setId(number++);
-            System.out.println(chromosome.getId());
         }
-        System.out.println("care之后："+list);
     }
 
     @Test
@@ -167,10 +163,9 @@ public class GASelection {//染色体选择（赌轮选择）
         GATestTools.produceData(list,neiborRatio);
         System.out.println("生成的数据\n"+list.toString());
         GASelection selection = new GASelection();
-        selection.setOldList(list);
         selection.setRatio(0.2);
         selection.setFlag(true);
-        selection.duSelection();
+        selection.duSelection(list);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {

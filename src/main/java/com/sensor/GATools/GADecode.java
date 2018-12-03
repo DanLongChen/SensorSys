@@ -77,7 +77,7 @@ public class GADecode {//最后输出结果
         Collections.sort(temp, new Comparator<Chromosome>() {
             @Override
             public int compare(Chromosome o1, Chromosome o2) {
-                return o1.getScore() > o2.getScore() ? -1 : o1.getScore() == o2.getScore() ? 0 : 1;
+                return o1.getScore() > o2.getScore() ? 1 : o1.getScore() == o2.getScore() ? 0 : -1;
             }
         });
         return temp.get(0).getScore();
