@@ -22,6 +22,7 @@ public class GASimulation extends Simulation {
     private int fPopulation = 10;
     private double mMutationRatio = 0.09;//种群基础变异率
     private double fMutatioinRatio = 0.01;
+    private double mutationRatio=0;//合并之后的基础变异率
     private double crossRatio = 0.8;//交叉率
     private int maxGeneration = 500;//最大代数
     private int zjGeneration=200;//种间杂交发生的代数
@@ -58,8 +59,10 @@ public class GASimulation extends Simulation {
         int dGeneration=0;//当前代数
         int mSameGeneration=0;//m种群相似染色体的代数
         int fSameGeneration=0;//f种群相似染色体的代数
+        int sameGeneration=0;//合并之后的染色体代数
         GASelection mSelection = new GASelection();//选择器
         GASelection fSelection = new GASelection();
+        GASelection selection = new GASelection();
 
         outer:
         while(dGeneration<maxGeneration){
@@ -95,12 +98,14 @@ public class GASimulation extends Simulation {
                     mSameGeneration++;
                     if(mSameGeneration>=TKGeneration){
                         MTK*=TKDecline;
+                        mSameGeneration=0;
                     }
                 }
                 if(GADecode.getMaxScore(fList)==mMaxScore){
                     fSameGeneration++;
                     if(fSameGeneration>=TKGeneration){
                         FTK*=TKDecline;
+                        fSameGeneration=0;
                     }
                 }
             }else{
@@ -113,8 +118,33 @@ public class GASimulation extends Simulation {
          */
         tList.addAll(mList);
         tList.addAll(fList);
+
         while(dGeneration<maxGeneration){
+            /**
+             * 计算适应度
+             */
             GAFitness.allFitness(tList);
+            int maxScore=GADecode.getMaxScore(tList);//获取最好的适应度
+            /**
+             * 染色体选择
+             */
+            selection.setOldList(tList);
+            selection.duSelection();//使用赌轮选择法
+            /**
+             * 交叉
+             */
+            GACross.doCross(tList,crossRatio,TK);
+            /**
+             * 变异
+             */
+            GAMutation.doMutation(tList,mutationRatio,dGeneration);
+            if(GADecode.getMaxScore(mList)==maxScore){
+                sameGeneration++;
+                if(sameGeneration>=TKGeneration){
+                    TK*=TKDecline;
+                    sameGeneration=0;
+                }
+            }
             dGeneration++;
         }
 
