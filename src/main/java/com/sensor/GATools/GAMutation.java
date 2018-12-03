@@ -20,7 +20,7 @@ public class GAMutation {
      * @param Md（整体变异概率）
      * @param generation（当前代数）
      */
-    public static void doMutation(List<Chromosome> list, double Md,int generation){
+    public static void doMyGAMutation(List<Chromosome> list, double Md,int generation){
         int K=(int) (GAGetChromosomeLength.getLength(list.get(0))*0.1);
         for(Chromosome chromosome:list){//对染色体中的每一条染色体执行变异，然后调整其变异率
             double ratio=Math.random();
@@ -35,7 +35,8 @@ public class GAMutation {
                     gene.getList().set(genePoint,true);
                 }
             }
-            chromosome.setRatio(Md+0.02*(1-chromosome.getScore()/GADecode.getMaxScore(list))+0.01*1/generation);//按照公式变更变异率
+            System.out.println(Md+0.03*(Math.abs(1-chromosome.getScore()/GADecode.getMaxScore(list)))+0.02*1/generation);
+            chromosome.setRatio(Md+0.03*(Math.abs(1-chromosome.getScore()/GADecode.getMaxScore(list)))+0.02*1/generation);//按照公式变更变异率
         }
         /***
          * 调整染色体数组的邻居列表和信赖值（需要在全部变异完之后进行）
@@ -75,7 +76,7 @@ public class GAMutation {
         List<Chromosome> list = new ArrayList<Chromosome>();
         GATestTools.produceData(list,0.2);
         System.out.println(list);
-        GAMutation.doMutation(list,1,50);
+        GAMutation.doMyGAMutation(list,1,50);
         System.out.println(list);
     }
 

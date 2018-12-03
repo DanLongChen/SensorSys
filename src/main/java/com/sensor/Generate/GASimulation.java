@@ -25,7 +25,7 @@ public class GASimulation extends Simulation {
     private double mutationRatio=0;//合并之后的基础变异率
     private double crossRatio = 0.8;//交叉率
     private int maxGeneration = 500;//最大代数
-    private int zjGeneration=200;//种间杂交发生的代数
+    private int zjGeneration=250;//种间杂交发生的代数
     /***
      * 染色体控制参数
      */
@@ -64,11 +64,9 @@ public class GASimulation extends Simulation {
     }
     @Test
     public void doMyGA(){
-        init();
+        init();//初始化
         System.out.println(mList);
         System.out.println(fList);
-        GASimulation gaSimulation = new GASimulation();
-        gaSimulation.init();//初始化阶段
         int dGeneration=0;//当前代数
         int mSameGeneration=0;//m种群相似染色体的代数
         int fSameGeneration=0;//f种群相似染色体的代数
@@ -101,8 +99,8 @@ public class GASimulation extends Simulation {
                 /**
                  * 变异过程(整体变异率还没有改变)
                  */
-                GAMutation.doMutation(mList,mMutationRatio,dGeneration);
-                GAMutation.doMutation(fList,fMutatioinRatio,dGeneration);
+                GAMutation.doMyGAMutation(mList,mMutationRatio,dGeneration);
+                GAMutation.doMyGAMutation(fList,fMutatioinRatio,dGeneration);
 
                 /**
                  * 退火温度设置
@@ -152,7 +150,7 @@ public class GASimulation extends Simulation {
             /**
              * 变异
              */
-            GAMutation.doMutation(tList,mutationRatio,dGeneration);
+            GAMutation.doMyGAMutation(tList,mutationRatio,dGeneration);
             if(GADecode.getMaxScore(mList)==maxScore){
                 sameGeneration++;
                 if(sameGeneration>=TKGeneration){
@@ -161,12 +159,14 @@ public class GASimulation extends Simulation {
                 }
             }
             dGeneration++;
+//            System.out.println(tList);
             System.out.println("整合后最佳分数："+GADecode.getMaxScore(tList));
         }
-        System.out.println(tList);
+
 
     }
     public void doSGA(){
+        init();
 
     }
 
