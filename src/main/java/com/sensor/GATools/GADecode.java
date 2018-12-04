@@ -42,13 +42,14 @@ public class GADecode {//最后输出结果
         }
         int score = 0;
         for (Gene gene : chromosome.getList()) {
-            for (Boolean b : gene.getList()) {
+            /*for (Boolean b : gene.getList()) {
                 if (b) {
                     score += 1;
                 } else {
                     score += 0;
                 }
-            }
+            }*/
+
         }
         chromosome.setScore(score);
     }

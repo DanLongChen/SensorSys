@@ -95,7 +95,7 @@ public class GAMutation {
                 }
             }
         }
-        GADecode.setAllScore(list);
+        GADecode.setAllScore(list);//重新计算得分
     }
 
     /***
@@ -105,9 +105,9 @@ public class GAMutation {
      */
     public static void doMGAMutation(List<Chromosome> list,double Md){
         int K=(int) (GAGetChromosomeLength.getLength(list.get(0))*0.1);//韩明重量的范围值
-        for(Chromosome chromosome:list){//对染色体中的每一条染色体执行变异，然后调整其变异率
+        for(Chromosome chromosome:list){//对染色体中的每一条染色体执行变异
             double ratio=Math.random();
-            if(ratio<=Md){//与染色体各自的变异率进行比较
+            if(ratio<=Md){//与总体染色体变异概率相比较
                 int geneListPoint=(int)Math.floor(chromosome.getList().size()*Math.random());//寻找变异的基因位置
                 Gene gene=chromosome.getList().get(geneListPoint);
                 int genePoint=(int)Math.floor(gene.getList().size()*Math.random());//寻找基因中需要变异的基因位
