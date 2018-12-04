@@ -27,6 +27,6 @@ public class test {
         GADecode.getAllScore(list);
         GASelection selection=new GASelection();
         selection.setOldList(list);
-        selection.jinSelection();
+        selection.jinSelection(list);
     }
 }

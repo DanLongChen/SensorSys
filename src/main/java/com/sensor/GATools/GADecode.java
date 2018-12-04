@@ -2,6 +2,7 @@ package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
+import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.standard.processor.StandardInliningCDATASectionProcessor;
 
@@ -73,7 +74,7 @@ public class GADecode {//最后输出结果
      * @return
      */
     public static int getMaxScore(List<Chromosome> list) {
-        List<Chromosome> temp = GADeepCopy.deepCopyList(list);
+        List<Chromosome> temp = GADeepCopy.deepCopyList(list);//进行深拷贝，避免排序对原染色体数组产生影响
         Collections.sort(temp, new Comparator<Chromosome>() {
             @Override
             public int compare(Chromosome o1, Chromosome o2) {
@@ -105,5 +106,14 @@ public class GADecode {//最后输出结果
             sum += chromosome.getScore();
         }
         return sum;
+    }
+    @Test
+    public void test(){
+        List<Chromosome> list = new ArrayList<Chromosome>();
+        GATestTools.produceData(list,0.2);
+        System.out.println(list);
+        GADecode.getMaxScore(list);
+        System.out.println(list);
+
     }
 }

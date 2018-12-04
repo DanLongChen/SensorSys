@@ -13,19 +13,19 @@ import java.util.List;
  **/
 public class GASimulation extends Simulation {
     /***
-     * 种群控制参数
+     * MyGA种群控制参数
      */
     private List<Chromosome> mList = new ArrayList<Chromosome>();//两个种群
     private List<Chromosome> fList = new ArrayList<Chromosome>();
     private List<Chromosome> tList=new ArrayList<Chromosome>();//合并之后的种群
-    private int mPopulation = 30;//种群数量
-    private int fPopulation = 30;
+    private int mPopulation = 75;//种群数量
+    private int fPopulation = 75;
     private double mMutationRatio = 0.09;//种群基础变异率
-    private double fMutatioinRatio = 0.01;
-    private double mutationRatio=0;//合并之后的基础变异率
+    private double fMutatioinRatio = 0.05;
+    private double mutationRatio=0.01;//合并之后的基础变异率
     private double crossRatio = 0.8;//交叉率
-    private int maxGeneration = 500;//最大代数
-    private int zjGeneration=250;//种间杂交发生的代数
+    private int maxGeneration = 200;//最大代数
+    private int zjGeneration=180;//种间杂交发生的代数
     /***
      * 染色体控制参数
      */
@@ -40,10 +40,29 @@ public class GASimulation extends Simulation {
     private double TKDecline=0.88;//温度下降比例（整体有效）
     private int TKGeneration=3;//经过多少代最大值相似则下降温度
 
+
+    /***
+     * SGA种群控制参数
+     */
+    private List<Chromosome> SGAList=new ArrayList<Chromosome>();//初始化染色体数组
+    private int SGAPopulation=150;//初始化种群数量
+    private double SGAMutationRatio=0.01;//变异概率
+    private double SGACrossRatio=0.8;//交叉概率
+    private int SGAmaxGeneration=200;//最大代数
+
+    /**
+     * MGA种群控制参数
+     */
+    private List<Chromosome> MGAList=new ArrayList<Chromosome>();//初始化染色体数组
+    private int MGAPopulation=150;//种群大小
+    private double MGAMutationRatio=0.01;//变异概率
+    private double MGACrossRatio=0.8;//交叉概率
+    private int MGAmaxGeneration=200;//最大代数
+
     /***
      * 初始化染色体种群
      */
-    private void init() {
+    private void initMyGA() {
         /**
          * 清空染色体数组
          */
@@ -51,8 +70,8 @@ public class GASimulation extends Simulation {
         fList.clear();
         tList.clear();
 
-        initPopulation(mList, mPopulation, 3, mMutationRatio);//初始化每个种群
-        initPopulation(fList, fPopulation, 3, fMutatioinRatio);
+        initPopulation(mList, mPopulation, 42, mMutationRatio);//初始化每个种群
+        initPopulation(fList, fPopulation, 42, fMutatioinRatio);
         /*
         初始化邻居队列
          */
@@ -62,18 +81,43 @@ public class GASimulation extends Simulation {
         GADecode.setAllScore(mList);
         GADecode.setAllScore(fList);
     }
+
+    private void initSGA(){
+        /**
+         * 清空染色体数组
+         */
+        SGAList.clear();
+
+        initPopulation(SGAList,SGAPopulation,42,0);
+
+        GADecode.setAllScore(SGAList);
+    }
+
+    private void initMGA(){
+        MGAList.clear();
+        initPopulation(MGAList,MGAPopulation,42,0);
+        GADecode.setAllScore(MGAList);
+
+    }
+
+    /**
+     * 各GA算法
+     */
     @Test
     public void doMyGA(){
-        init();//初始化
-        System.out.println(mList);
-        System.out.println(fList);
+        initMyGA();//初始化
+
+       /* System.out.println("初始化的m种群："+mList);
+        System.out.println("初始化的f种群："+fList);*/
+
         int dGeneration=0;//当前代数
         int mSameGeneration=0;//m种群相似染色体的代数
         int fSameGeneration=0;//f种群相似染色体的代数
-        int sameGeneration=0;//合并之后的染色体代数
+        int sameGeneration=0;//合并之后相似的染色体代数
         GASelection mSelection = new GASelection();//选择器
         GASelection fSelection = new GASelection();
         GASelection selection = new GASelection();
+        selection.setFlag(false);
 
         outer:
         while(dGeneration<maxGeneration){
@@ -89,13 +133,15 @@ public class GASimulation extends Simulation {
                  */
 //                mSelection.setOldList(mList);
 //                fSelection.setOldList(fList);
-                mSelection.duSelection(mList);//这里选用赌轮选择法
-                fSelection.duSelection(fList);
+                mSelection.jinSelection(mList);//这里选用赌轮选择法
+                fSelection.jinSelection(fList);
+                mSelection.neiborCare(mList,mSelection.getNeiborRatio());
+                fSelection.neiborCare(fList,fSelection.getNeiborRatio());
                 /**
                  * 交叉过程（之后计算退火温度）
                  */
-                GACross.doCross(mList,crossRatio,MTK);
-                GACross.doCross(fList,crossRatio,FTK);
+                GACross.doMyGACross(mList,crossRatio,MTK);
+                GACross.doMyGACross(fList,crossRatio,FTK);
                 /**
                  * 变异过程(整体变异率还没有改变)
                  */
@@ -122,9 +168,8 @@ public class GASimulation extends Simulation {
             }else{
                 break outer;
             }
+            System.out.println("当前代数："+dGeneration+" f最佳染色体得分："+GADecode.getMaxScore(fList)+" m最佳染色体得分："+GADecode.getMaxScore(fList));
             dGeneration++;
-            System.out.println("m最佳分数："+GADecode.getMaxScore(mList));
-            System.out.println("f最佳分数："+GADecode.getMaxScore(fList));
         }
         /**
          * 种内遗传完成，开始种间遗传操作
@@ -142,11 +187,12 @@ public class GASimulation extends Simulation {
              * 染色体选择
              */
 //            selection.setOldList(tList);
-            selection.duSelection(tList);//使用赌轮选择法
+            selection.jinSelection(tList);//使用赌轮选择法
+            selection.neiborCare(tList,selection.getNeiborRatio());
             /**
              * 交叉
              */
-            GACross.doCross(tList,crossRatio,TK);
+            GACross.doMyGACross(tList,crossRatio,TK);
             /**
              * 变异
              */
@@ -158,15 +204,55 @@ public class GASimulation extends Simulation {
                     sameGeneration=0;
                 }
             }
+            System.out.println("当前代数："+dGeneration+" 整合后最佳分数："+GADecode.getMaxScore(tList));
             dGeneration++;
-//            System.out.println(tList);
-            System.out.println("整合后最佳分数："+GADecode.getMaxScore(tList));
         }
 
 
     }
+    @Test
     public void doSGA(){
-        init();
+        initSGA();
+        int dGeneration=0;//当前代数
+        int sameGeneration=0;//相似染色体代数
+        GASelection selection=new GASelection();//选择器
+        while(dGeneration<=SGAmaxGeneration){
+            /**
+             * 计算适应度
+             */
+            GAFitness.allFitness(tList);
+            int maxScore=GADecode.getMaxScore(SGAList);//获取最好的适应度
+            /**
+             *染色体选择
+             */
+            selection.jinSelection(SGAList);
+            selection.idSort(SGAList);
+            /**
+             * 染色体交叉
+             */
+            GACross.doSGACross(SGAList,SGACrossRatio,TK);
+            /**
+             * 染色体变异
+             */
+            GAMutation.doSGAMutation(SGAList,SGAMutationRatio);
+
+
+            if(GADecode.getMaxScore(SGAList)==maxScore){
+                sameGeneration++;
+                if(sameGeneration>=TKGeneration){
+                    TK*=TKDecline;
+                    sameGeneration=0;
+                }
+            }
+            System.out.println("当前代数："+dGeneration+" 最好染色体得分："+GADecode.getMaxScore(SGAList));
+            dGeneration++;
+
+        }
+//        System.out.println("最佳染色体种群："+SGAList);
+
+    }
+
+    public void doMGA(){
 
     }
 
@@ -183,10 +269,10 @@ public class GASimulation extends Simulation {
      * @param ratio（初始化变异率）
      */
     private void initPopulation(List<Chromosome> list, int population, int nodeNumber, double ratio) {
-        for (int i = 0; i < population; i++) {//初始化公种群的染色体
+        for (int i = 0; i < population; i++) {//初始化种群的染色体
             Chromosome mchromosome = new Chromosome(i, ratio);
             for (int j = 0; j < nodeNumber; j++) {
-                Gene gene = new Gene(2, 3);//输入in和out，以后用数组代替
+                Gene gene = new Gene(2, 2);//输入in和out，以后用数组代替
                 gene.Init();//初始化基因
                 mchromosome.getList().add(gene);
             }
