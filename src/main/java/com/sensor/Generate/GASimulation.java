@@ -22,18 +22,18 @@ public class GASimulation extends Simulation {
     private List<Chromosome> mList = new ArrayList<Chromosome>();//两个种群
     private List<Chromosome> fList = new ArrayList<Chromosome>();
     private List<Chromosome> tList = new ArrayList<Chromosome>();//合并之后的种群
-    private int mPopulation = 75;//种群数量
-    private int fPopulation = 75;
+    private int mPopulation = 100;//种群数量
+    private int fPopulation = 100;
     private double mMutationRatio = 0.09;//种群基础变异率
     private double fMutatioinRatio = 0.01;
-    private double mutationRatio = 0.01;//合并之后的基础变异率
-    private double crossRatio = 0.2;//交叉率
+    private double mutationRatio = 0.09;//合并之后的基础变异率
+    private double crossRatio = 0.8;//交叉率
     private int maxGeneration = 20;//最大代数
     private int zjGeneration = 10;//种间杂交发生的代数
     /***
      * 染色体控制参数
      */
-    private double neighborRatio = 0.9;//邻居列表占全体种群的比例
+    private double neighborRatio = 0.5;//邻居列表占全体种群的比例
     private double K = 0.9;//是否开启精英的阈值
     /***
      *退火参数控制
@@ -51,7 +51,7 @@ public class GASimulation extends Simulation {
     private List<Chromosome> SGAList = new ArrayList<Chromosome>();//初始化染色体数组
     private int SGAPopulation = 200;//初始化种群数量
     private double SGAMutationRatio = 0.01;//变异概率
-    private double SGACrossRatio = 0.2;//交叉概率
+    private double SGACrossRatio = 0.8;//交叉概率
     private int SGAmaxGeneration = 20;//最大代数
 
     /**
@@ -59,14 +59,15 @@ public class GASimulation extends Simulation {
      */
     private List<Chromosome> MGAList = new ArrayList<Chromosome>();//初始化染色体数组
     private int MGAPopulation = 200;//种群大小
-    private double MGAMutationRatio = 0.09;//变异概率
-    private double MGACrossRatio = 0.2;//交叉概率
+    private double MGAMutationRatio = 0.01;//变异概率
+    private double MGACrossRatio = 0.8;//交叉概率
     private int MGAmaxGeneration = 20;//最大代数
 
     /***
      * 初始化染色体种群
      */
-    private void initMyGA() {
+    @Test
+    public void initMyGA() {
         /**
          * 清空染色体数组
          */
@@ -74,14 +75,16 @@ public class GASimulation extends Simulation {
         fList.clear();
         tList.clear();
 
-        initPopulation(mList, mPopulation, 50, mMutationRatio);//初始化每个种群
-        initPopulation(fList, fPopulation, 50, fMutatioinRatio);
+        initPopulation(mList, mPopulation, 150, mMutationRatio);//初始化每个种群
+        initPopulation(fList, fPopulation, 150, fMutatioinRatio);
         /*
         初始化邻居队列
          */
         initNeighbor(mList, neighborRatio);
         initNeighbor(fList, neighborRatio);
-
+        /**
+         * 计算分数
+         */
         GADecode.setAllScore(mList);
         GADecode.setAllScore(fList);
     }
@@ -107,15 +110,14 @@ public class GASimulation extends Simulation {
         GADecode.setAllScore(MGAList);
     }
 
-    /**
-     * 各GA算法
+    /***
+     *
+     * @param list（用于存储每一代中最好的个体的分数）
      */
     @Test
-    public void doMyGA(List<Integer> list, List<Integer> generationList) {
+    public void doMyGA(List<Integer> list) {
         initMyGA();//初始化
 
-       /* System.out.println("初始化的m种群："+mList);
-        System.out.println("初始化的f种群："+fList);*/
 
         int dGeneration = 0;//当前代数
         int mSameGeneration = 0;//m种群相似染色体的代数
@@ -155,8 +157,8 @@ public class GASimulation extends Simulation {
                 /**
                  * 变异过程(整体变异率还没有改变)
                  */
-                GAMutation.doMyGAMutation(mList, mMutationRatio, dGeneration);
-                GAMutation.doMyGAMutation(fList, fMutatioinRatio, dGeneration);
+                GAMutation.doMyGAMutation(mList, mMutationRatio, dGeneration,fMaxScore);
+                GAMutation.doMyGAMutation(fList, fMutatioinRatio, dGeneration,mMaxScore);
 
                 /**
                  * 退火温度设置
@@ -173,16 +175,22 @@ public class GASimulation extends Simulation {
                     if (fSameGeneration >= TKGeneration) {
                         FTK *= TKDecline;
                         fSameGeneration = 0;
+                        mMutationRatio+=1/maxGeneration;
+                        fMutatioinRatio+=1/maxGeneration;
                     }
+                }else{
+                    mMutationRatio-=1/maxGeneration;
+                    fMutatioinRatio-=1/maxGeneration;
                 }
             } else {
                 break outer;
             }
-            System.out.println("当前代数：" + dGeneration + " f最佳染色体得分：" + GADecode.getMaxScore(fList) + " m最佳染色体得分：" + GADecode.getMaxScore(fList));
+            System.out.println("当前代数：" + dGeneration + " f最佳染色体得分：" + GADecode.getMaxScore(fList) + " m最佳染色体得分：" + GADecode.getMaxScore(mList));
             list.add(Math.max(GADecode.getMaxScore(fList), GADecode.getMaxScore(fList)));
-            generationList.add(dGeneration);
             dGeneration++;
         }
+        TK=(MTK+FTK)/2;
+//        mutationRatio=(fMutatioinRatio+mMutationRatio)/2;
         /**
          * 种内遗传完成，开始种间遗传操作
          */
@@ -208,17 +216,19 @@ public class GASimulation extends Simulation {
             /**
              * 变异
              */
-            GAMutation.doMyGAMutation(tList, mutationRatio, dGeneration);
+            GAMutation.doMyGAMutation(tList, mutationRatio, dGeneration,maxScore);
             if (GADecode.getMaxScore(mList) == maxScore) {
                 sameGeneration++;
                 if (sameGeneration >= TKGeneration) {
                     TK *= TKDecline;
                     sameGeneration = 0;
+                    mutationRatio+=1/maxGeneration;
                 }
+            }else{
+                mutationRatio-=1/maxGeneration;
             }
             System.out.println("当前代数：" + dGeneration + " 整合后最佳分数：" + GADecode.getMaxScore(tList));
             list.add(GADecode.getMaxScore(tList));
-            generationList.add(dGeneration);
             dGeneration++;
         }
 
@@ -311,27 +321,27 @@ public class GASimulation extends Simulation {
 
     @Test
     public void doAllGA() {
-//        List<Integer> MyGAList = new ArrayList<Integer>();
+        List<Integer> MyGAList = new ArrayList<Integer>();
         List<Integer> generationList = new ArrayList<Integer>();
         List<Integer> SGAList = new ArrayList<Integer>();
         List<Integer> MGAList = new ArrayList<Integer>();
-//        doMyGA(MyGAList, generationList);
+        doMyGA(MyGAList);
         doSGA(SGAList);
         doMGA(MGAList,generationList);
-        String[] rowKeys = {"SGA", "MGA"};
+        String[] rowKeys = {"MyGA","SGA", "MGA"};
         Integer[] colKeys = new Integer[generationList.size()];
         generationList.toArray(colKeys);
-        double[][] data=new double[2][MGAList.size()];
-//        for(int i=0;i<MyGAList.size();i++){
-//            data[0][i]=MyGAList.get(i);
-//        }
+        double[][] data=new double[3][MGAList.size()];
+        for(int i=0;i<MyGAList.size();i++){
+            data[0][i]=MyGAList.get(i);
+        }
         System.out.println(SGAList);
         System.out.println(MGAList);
         for(int i=0;i<SGAList.size();i++){
-            data[0][i]=SGAList.get(i);
+            data[1][i]=SGAList.get(i);
         }
         for(int i=0;i<MGAList.size();i++){
-            data[1][i]=MGAList.get(i);
+            data[2][i]=MGAList.get(i);
         }
         GAChart.doChart(rowKeys, colKeys, data);
         try {

@@ -97,6 +97,7 @@ public class GADecode {//最后输出结果
                 return o1.getScore() > o2.getScore() ? 1 : o1.getScore() == o2.getScore() ? 0 : -1;
             }
         });
+//        temp.clear();
         return temp.get(0).getScore();
     }
 
