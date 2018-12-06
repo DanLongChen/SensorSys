@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.standard.processor.StandardInliningCDATASectionProcessor;
 
 import java.util.*;
+import java.util.zip.CheckedOutputStream;
 
 /**
  * Created by DanLongChen on 2018/11/26
@@ -41,6 +42,8 @@ public class GADecode {//最后输出结果
             return;
         }
         int score = 0;
+        int i = 0;
+        int count = 0;//中间计数器
         for (Gene gene : chromosome.getList()) {
             /*for (Boolean b : gene.getList()) {
                 if (b) {
@@ -49,7 +52,19 @@ public class GADecode {//最后输出结果
                     score += 0;
                 }
             }*/
-
+            for (i = 1; i <= gene.getList().size(); i++) {
+                if (gene.getList().get(i - 1) == true) {
+                    count++;
+                }
+                if (count == 2) {
+                    score++;//有两个输入连接，就表示需要编码
+                    count=0;
+                    break;//跳出这次循环
+                }
+                if (i % gene.getGeneIn() == 0) {
+                    count = 0;
+                }
+            }
         }
         chromosome.setScore(score);
     }
@@ -108,12 +123,13 @@ public class GADecode {//最后输出结果
         }
         return sum;
     }
+
     @Test
-    public void test(){
+    public void test() {
         List<Chromosome> list = new ArrayList<Chromosome>();
-        GATestTools.produceData(list,0.2);
+        GATestTools.produceData(list, 0.2);
         System.out.println(list);
-        GADecode.getMaxScore(list);
+        GADecode.setAllScore(list);
         System.out.println(list);
 
     }
