@@ -142,6 +142,8 @@ public class GASelection {//染色体选择（赌轮选择）
                     chromosome.getNlist().set(i,GAFindChromosomeById.findById(list,changeNeiborID));//把第i个值的ID改变掉(这里返回的是为那个ID的染色体在数组中的下标)
                 }
             }
+        }
+        for(Chromosome chromosome:list){
             /**
              * 这里染色体ID先不改变，因为移除邻居队列中的ID值的时候需要判断ID
              */
@@ -152,8 +154,15 @@ public class GASelection {//染色体选择（赌轮选择）
                     if(chromosome.getNlist().contains(neiborAddPoint) || neiborAddPoint==chromosome.getId()){//若有重复则重新插入
                         continue;
                     }
-                    chromosome.getNlist().add(neiborAddPoint);
-                    chromosome.getTrust().add(-1.0);
+                    /***
+                     * 双方都要插入（a是b的邻居，那么b也是a的邻居）
+                     */
+                    chromosome.getNlist().add(neiborAddPoint);//当前的染色体加入其他染色体作为邻居
+                    chromosome.getTrust().add(0.0);
+
+                    list.get(neiborAddPoint).getNlist().add(list.indexOf(chromosome));//邻居把当前染色体加入
+                    list.get(neiborAddPoint).getTrust().add(0.0);
+
                 }
             }
         }

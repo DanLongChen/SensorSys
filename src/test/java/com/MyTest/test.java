@@ -1,7 +1,9 @@
 package com.MyTest;
 
+import com.sensor.GATools.GACross;
 import com.sensor.GATools.GADecode;
 import com.sensor.GATools.GASelection;
+import com.sensor.GATools.GATestTools;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
 
@@ -14,19 +16,11 @@ import java.util.List;
 public class test {
     public static void main(String[] args) {//测试染色体选择模块
         List<Chromosome> list = new ArrayList<Chromosome>();
-        for(int i=0;i<2;i++){
-            Chromosome temp=new Chromosome(i,0.09);
-            for(int j = 0;j<3;j++){
-                Gene gene=new Gene(2,3);
-                gene.Init();
-                temp.list.add(gene);
-            }
-            GADecode.getScore(temp);
-            list.add(temp);
-        }
-        GADecode.getAllScore(list);
-        GASelection selection=new GASelection();
-        selection.setOldList(list);
-        selection.jinSelection(list);
+        double neiborRatio = 0.2;
+        GATestTools.produceData(list, neiborRatio);
+        System.out.println(list);
+        GACross cross = new GACross();
+        cross.doSGACross(list, 1.0);
+        System.out.println(list);
     }
 }
