@@ -20,7 +20,7 @@ public class test {
         GATestTools.produceData(list, neiborRatio);
         System.out.println(list);
         GACross cross = new GACross();
-        cross.doSGACross(list, 1.0);
+        cross.doMGACross(list, 0.1,1.0);
         System.out.println(list);
     }
 }

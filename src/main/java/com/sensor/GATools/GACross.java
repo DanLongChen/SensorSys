@@ -2,11 +2,12 @@ package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
         for (Chromosome chromosome : list) {
             int position = chromosome.getNlist().get((int) Math.floor(Math.random() * chromosome.getNlist().size()));//获得邻居队列中的染色体(染色体ID)
 //            System.out.println("position:"+position);
-            doSingleCross(list, chromosome, newList.get(GAFindChromosomeById.findById(newList, position)).deepClone(), crossRatio, TK);//这里邻居列表的染色体从原数组拿取
+            CanShuHuaSingleCross(list, chromosome, newList.get(GAFindChromosomeById.findById(newList, position)).deepClone(), crossRatio);//这里邻居列表的染色体从原数组拿取
         }
     }
 
@@ -55,12 +56,11 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
      * 采用正交表来交叉
      */
     public static void doMGACross(List<Chromosome> list, double crossRatio, double TK) {
-
         List<Chromosome> newList = GADeepCopy.deepCopyList(list);//原染色体数组的备份
         for (Chromosome chromosome : list) {
             int position = chromosome.getNlist().get((int) Math.floor(Math.random() * chromosome.getNlist().size()));//获得邻居队列中的染色体(染色体ID)
 //            System.out.println("position:"+position);
-            doSingleCross(list, chromosome, newList.get(GAFindChromosomeById.findById(newList, position)).deepClone(), crossRatio, TK);//这里邻居列表的染色体从原数组拿取
+            doZJBSingleCross(list, chromosome, newList.get(GAFindChromosomeById.findById(newList, position)).deepClone(), crossRatio);//这里邻居列表的染色体从原数组拿取
         }
     }
 
@@ -164,35 +164,69 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
         }
     }
 
-    public static void ZJBSingleCross(List<Chromosome> newList, Chromosome num1, Chromosome num2, double crossRatio){
+    public static void doZJBSingleCross(List<Chromosome> newList, Chromosome num1, Chromosome num2, double crossRatio){
         int[][] ZJTable=new int[][]{{0,0,0},{0,1,1},{1,0,1},{1,1,0}};//构造正交表
         double ratio=Math.random();
         if(ratio<crossRatio){
+
             int pointA = ((int) (num1.getList().size() * Math.random())) % num1.getList().size();//得到前交叉点
             int pointB = ((int) (num2.getList().size() * Math.random())) % num2.getList().size();//得到后交叉点
+            while(pointA==pointB){//一定要得到不同的两个点，两个点将染色体分成三段
+               pointA = ((int) (num1.getList().size() * Math.random())) % num1.getList().size();//得到前交叉点
+                pointB = ((int) (num2.getList().size() * Math.random())) % num2.getList().size();//得到后交叉点
+            }
             int min = Math.min(pointA, pointB);
             int max = Math.max(pointA, pointB);
+//            System.out.println("中的是："+num1.getId()+"切割的位置："+min+" "+max);
             Chromosome num1Temp=num1.deepClone();
+            /***
+             * 需要被分段的染色体，先做分段
+             */
             List<Gene> listA=num1Temp.getList();
             List<Gene> listB=num2.getList();
-            Chromosome chromosomeA=new Chromosome(0,0);
-            int point=0;
-            for(int i=0;i<ZJTable.length;i++){
-                if(i==0){//组合第一条染色体
-                    for(int j=0;j<ZJTable[i].length;j++){
-                        if(ZJTable[i][j]==0){
-                            while(point<=min){
-                                chromosomeA.getList().add(listA.get(point));
-                            }
-                        }else{
-                            while(point<=min){
-                                chromosomeA.getList().add(listB.get(point));
-                            }
-                        }
+
+            List<Chromosome> chromosomeList=new ArrayList<Chromosome>();//装载正交表正交产生的四条染色体
+            chromosomeList.add(new Chromosome(0,0));
+            chromosomeList.add(new Chromosome(0,0));
+            chromosomeList.add(new Chromosome(0,0));
+            chromosomeList.add(new Chromosome(0,0));
+
+            for(int i=0;i<ZJTable.length;i++){//循环四个正交表的行
+                int[] temp=ZJTable[i];
+                for(int j=0;j<temp.length;j++){
+                    if(j==0 && temp[j]==0){
+                        chromosomeList.get(i).getList().addAll(new ArrayList<Gene>(listA.subList(0,min)));
+                    }
+                    if(j==0 && temp[j]==1){
+                        chromosomeList.get(i).getList().addAll(new ArrayList<Gene>(listB.subList(0,min)));
                     }
 
+                    if(j==1 && temp[j]==0){
+                        chromosomeList.get(i).getList().addAll(new ArrayList<Gene>(listA.subList(min,max)));
+                    }
+                    if(j==1 && temp[j]==1){
+                        chromosomeList.get(i).getList().addAll(new ArrayList<Gene>(listB.subList(min,max)));
+                    }
+
+                    if(j==2 && temp[j]==0){
+                        chromosomeList.get(i).getList().addAll(new ArrayList<Gene>(listA.subList(max,listA.size())));
+                    }
+                    if(j==2 && temp[j]==1){
+                        chromosomeList.get(i).getList().addAll(new ArrayList<Gene>(listB.subList(max,listA.size())));
+                    }
                 }
             }
+            GADecode.setAllScore(chromosomeList);
+//            System.out.println(chromosomeList);
+            Collections.sort(chromosomeList, new Comparator<Chromosome>() {
+                @Override
+                public int compare(Chromosome o1, Chromosome o2) {
+                   return o1.getScore()>o2.getScore()?1:o1.getScore()==o2.getScore()?0:-1;
+                }
+            });
+
+
+            GAReplace.doReplace(newList,num1,chromosomeList.get(0));//替换旧的
 
         }
     }

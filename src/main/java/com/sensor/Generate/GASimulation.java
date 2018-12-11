@@ -29,11 +29,11 @@ public class GASimulation extends Simulation {
     private double mutationRatio = 0.09;//合并之后的基础变异率
     private double crossRatio = 0.8;//交叉率
     private int maxGeneration = 50;//最大代数
-    private int zjGeneration = 8;//种间杂交发生的代数
+    private int zjGeneration = 15;//种间杂交发生的代数
     /***
      * 染色体控制参数
      */
-    private double neighborRatio = 0.5;//邻居列表占全体种群的比例
+    private double neighborRatio = 0.8;//邻居列表占全体种群的比例
     private double K = 0.9;//是否开启精英的阈值
     /***
      *退火参数控制
@@ -59,7 +59,7 @@ public class GASimulation extends Simulation {
      */
     private List<Chromosome> MGAList = new ArrayList<Chromosome>();//初始化染色体数组
     private int MGAPopulation = 200;//种群大小
-    private double MGAMutationRatio = 0.01;//变异概率
+    private double MGAMutationRatio = 0.09;//变异概率
     private double MGACrossRatio = 0.8;//交叉概率
     private int MGAmaxGeneration = 50;//最大代数
 
@@ -241,7 +241,7 @@ public class GASimulation extends Simulation {
         int dGeneration = 0;//当前代数
         int sameGeneration = 0;//相似染色体代数
         GASelection selection = new GASelection();//选择器
-        selection.setFlag(true);
+        selection.setFlag(false);
         while (dGeneration < SGAmaxGeneration) {
             /**
              * 计算适应度
