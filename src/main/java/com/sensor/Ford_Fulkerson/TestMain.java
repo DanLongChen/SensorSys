@@ -58,6 +58,9 @@ public class TestMain {
         graph.MaxFlow();
         graph.showResult();
     }
+    public static void test3(){
+
+    }
 }
 
 
