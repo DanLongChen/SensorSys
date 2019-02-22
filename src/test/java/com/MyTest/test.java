@@ -15,12 +15,6 @@ import java.util.List;
  **/
 public class test {
     public static void main(String[] args) {//测试染色体选择模块
-        List<Chromosome> list = new ArrayList<Chromosome>();
-        double neiborRatio = 0.2;
-        GATestTools.produceData(list, neiborRatio);
-        System.out.println(list);
-        GACross cross = new GACross();
-        cross.doMGACross(list, 0.1,1.0);
-        System.out.println(list);
+        System.out.println(Double.toHexString(0.9));
     }
 }
