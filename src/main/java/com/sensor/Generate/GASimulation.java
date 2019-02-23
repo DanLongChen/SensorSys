@@ -1,9 +1,13 @@
 package com.sensor.Generate;
 
 import ch.qos.logback.core.util.TimeUtil;
+import com.sensor.Ford_Fulkerson.GANetwork;
+import com.sensor.Ford_Fulkerson.Graph;
+import com.sensor.Ford_Fulkerson.GraphResolve;
 import com.sensor.GATools.*;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
+import com.sensor.entity.MergeNode;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Time;
@@ -68,6 +72,11 @@ public class GASimulation extends Simulation {
      */
     @Test
     public void initMyGA() {
+        /***
+         * 网络图部分
+         */
+        Graph graph= GANetwork.initNetwork(3);
+        List<MergeNode> list= GraphResolve.getMergeNode(graph);//获得可能的编码节点
         /**
          * 清空染色体数组
          */
@@ -75,11 +84,13 @@ public class GASimulation extends Simulation {
         fList.clear();
         tList.clear();
 
-        GAInit.initPopulation(mList, mPopulation, 150, mMutationRatio);//初始化每个种群
-        GAInit.initPopulation(fList, fPopulation, 150, fMutatioinRatio);
-        /*
-        初始化邻居队列
-         */
+        GAInit.initPopulation(mList, mPopulation, list, mMutationRatio);//初始化每个种群
+        GAInit.initPopulation(fList, fPopulation, list, fMutatioinRatio);
+        /**
+         *
+         *  初始化邻居队列
+         *
+         **/
         GAInit.initNeighbor(mList, neighborRatio);
         GAInit.initNeighbor(fList, neighborRatio);
         /**
@@ -90,20 +101,24 @@ public class GASimulation extends Simulation {
     }
 
     private void initSGA() {
+        Graph graph= GANetwork.initNetwork(3);
+        List<MergeNode> list= GraphResolve.getMergeNode(graph);//获得可能的编码节点
         /**
          * 清空染色体数组
          */
         SGAList.clear();
 
-        GAInit.SGAInit(SGAList, SGAPopulation, 150);
+        GAInit.SGAInit(SGAList, SGAPopulation, list);
 
         GADecode.setAllScore(SGAList);
     }
 
     private void initMGA() {
+        Graph graph= GANetwork.initNetwork(3);
+        List<MergeNode> list= GraphResolve.getMergeNode(graph);//获得可能的编码节点
         MGAList.clear();
 
-        GAInit.initPopulation(MGAList, MGAPopulation, 150, 0);
+        GAInit.initPopulation(MGAList, MGAPopulation, list, 0);
 
         GAInit.initNeighbor(MGAList, neighborRatio);
 
@@ -227,7 +242,7 @@ public class GASimulation extends Simulation {
             }else{
                 mutationRatio-=1/maxGeneration;
             }
-            System.out.println("当前代数：" + dGeneration + " 整合后最佳分数：" + GADecode.getMaxScore(tList));
+            System.out.println("当前代数：" + dGeneration + " 整合后最佳分数：" + GADecode.getMaxScore(tList)+"平均得分："+GADecode.getAvgScore(tList));
             list.add(GADecode.getMaxScore(tList));
             dGeneration++;
         }
@@ -270,7 +285,7 @@ public class GASimulation extends Simulation {
                     sameGeneration = 0;
                 }
             }
-            System.out.println("当前代数：" + dGeneration + " 最好染色体得分：" + GADecode.getMaxScore(SGAList));
+            System.out.println("当前代数：" + dGeneration + " 最好染色体得分：" + GADecode.getMaxScore(SGAList)+"平均得分："+GADecode.getAvgScore(SGAList));
             list.add(GADecode.getMaxScore(SGAList));
             dGeneration++;
 
@@ -314,7 +329,7 @@ public class GASimulation extends Simulation {
                     sameGeneration = 0;
                 }
             }
-            System.out.println("当前代数：" + dGeneration + " 最好染色体得分：" + GADecode.getMaxScore(MGAList));
+            System.out.println("当前代数：" + dGeneration + " 最好染色体得分：" + GADecode.getMaxScore(MGAList)+"平均得分："+GADecode.getAvgScore(MGAList));
             list.add(GADecode.getMaxScore(MGAList));
             generationList.add(dGeneration);
             dGeneration++;

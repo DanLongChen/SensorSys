@@ -2,6 +2,7 @@ package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
+import com.sensor.entity.MergeNode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,49 +15,56 @@ public class GAInit {
      *
      * @param list（染色体数组）
      * @param population（初始化的人口数）
-     * @param nodeNumber（节点数）
+     * @param mergeNodeList（节点数）
      */
-    public static void SGAInit(List<Chromosome> list, int population, int nodeNumber){
-        for(int i=0;i<population-1;i++){
-            Chromosome SGAChromosome=new Chromosome(i,0);
-            for (int j = 0; j < nodeNumber; j++) {
-                Gene gene = new Gene(2, 2);//输入in和out，以后用数组代替
-                gene.Init();//初始化基因
-                SGAChromosome.getList().add(gene);
+    public static void SGAInit(List<Chromosome> list, int population, List<MergeNode> mergeNodeList) {
+        for (int i = 0; i < population - 1; i++) {
+            Chromosome SGAChromosome = new Chromosome(i, 0);
+            for (int j = 0; j < mergeNodeList.size(); j++) {
+                if (mergeNodeList.get(j).out != 0) {
+                    Gene gene = new Gene(mergeNodeList.get(j).in, mergeNodeList.get(j).out);//输入in和out，以后用数组代替
+                    gene.Init();//初始化基因
+                    SGAChromosome.getList().add(gene);
+                }
             }
             list.add(SGAChromosome);
         }
         /**
          * 添加全为1的染色体
          */
-        Chromosome add=new Chromosome(population-1,0);
-        for(int i=0;i<nodeNumber;i++){
-            Gene gene=new Gene(2,2);
-            for(int out=0;out<gene.getGeneOut();out++){
-                Boolean[] in=new Boolean[gene.getGeneIn()];
-                for(int gIn=0;gIn<gene.getGeneIn();gIn++){
-                    in[gIn]=true;
+        Chromosome add = new Chromosome(population - 1, 0);
+        for (int i = 0; i < mergeNodeList.size(); i++) {
+            if(mergeNodeList.get(i).out!=0) {
+                Gene gene = new Gene(mergeNodeList.get(i).in, mergeNodeList.get(i).out);
+                for (int out = 0; out < gene.getGeneOut(); out++) {
+                    Boolean[] in = new Boolean[gene.getGeneIn()];
+                    for (int gIn = 0; gIn < gene.getGeneIn(); gIn++) {
+                        in[gIn] = true;
+                    }
+                    gene.getList().addAll(Arrays.asList(in));
                 }
-                gene.getList().addAll(Arrays.asList(in));
+                add.getList().add(gene);
             }
-            add.getList().add(gene);
         }
         list.add(add);
     }
+
     /***
      * 初始化种群
      * @param list（种群数组）
      * @param population（人口数量）
-     * @param nodeNumber（传入的网络信息）
+     * @param mergeNodeList（传入的网络信息）
      * @param ratio（个体初始化变异率）
      */
-    public static void initPopulation(List<Chromosome> list, int population, int nodeNumber, double ratio) {
+    public static void initPopulation(List<Chromosome> list, int population, List<MergeNode> mergeNodeList, double ratio) {
         for (int i = 0; i < population; i++) {//初始化种群的染色体
             Chromosome mchromosome = new Chromosome(i, ratio);
-            for (int j = 0; j < nodeNumber; j++) {
-                Gene gene = new Gene(2, 2);//输入in和out，以后用数组代替
-                gene.Init();//初始化基因
-                mchromosome.getList().add(gene);
+            for (int j = 0; j < mergeNodeList.size(); j++) {
+                if (mergeNodeList.get(j).out != 0) {
+                    Gene gene = new Gene(mergeNodeList.get(j).in, mergeNodeList.get(j).out);//输入in和out，以后用数组代替
+                    gene.Init();//初始化基因
+                    mchromosome.getList().add(gene);
+                }
             }
             list.add(mchromosome);
         }

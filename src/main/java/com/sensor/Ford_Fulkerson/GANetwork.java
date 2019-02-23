@@ -1,28 +1,17 @@
-package com.sensor.GATools;
-
-import com.sensor.Ford_Fulkerson.Edge1;
-import com.sensor.Ford_Fulkerson.Graph;
-import org.junit.jupiter.api.Test;
+package com.sensor.Ford_Fulkerson;
 
 /**
  * Created by Paser on 2019/2/20.
  */
 public class GANetwork {
 
-    public void initNetwork(int copyNumber){
+    public static Graph initNetwork(int copyNumber){
         if(copyNumber==3){
-            TNetwork();
+            return TNetwork();
         }
-        if(copyNumber==7){
-            SNetwork();
-        }
-        if(copyNumber==15){
-            FNetwork();
-        }else{
-            TrNetwork();
-        }
+        return null;
     }
-    public void Onetwork(){//一次复制网络
+    public static Graph Onetwork(){//一次复制网络
         Graph graph=new Graph(7);
         Edge1[] edge1=new Edge1[9];
         edge1[0]=new Edge1(0,1,0,1);
@@ -37,11 +26,9 @@ public class GANetwork {
         for(int i=0;i<9;i++){
             graph.insertEdge(edge1[i]);
         }
-        graph.bianli();
-        graph.MaxFlow();
-        graph.showResult();
+        return graph;
     }
-    public void TNetwork(){//三次复制网络
+    public static Graph TNetwork(){//三次复制网络
         Graph graph=new Graph(19);
         Edge1[] edge1=new Edge1[30];
         edge1[0]=new Edge1(0,1,0,1);
@@ -77,10 +64,7 @@ public class GANetwork {
         for(int i=0;i<30;i++){
             graph.insertEdge(edge1[i]);
         }
-        graph.MaxFlow();
-        graph.showResult();
-
-
+        return graph;
     }
     public void SNetwork(){//7次复制网络
 

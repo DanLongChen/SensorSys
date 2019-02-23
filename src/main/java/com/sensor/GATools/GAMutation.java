@@ -40,7 +40,7 @@ public class GAMutation {
             }
 //            System.out.println(Md+0.03*(Math.abs(1-chromosome.getScore()/GADecode.getMaxScore(list)))+0.02*1/generation);
 //            chromosome.setRatio(Md+0.03*(Math.abs(1-GADecode.getMaxScore(list)/chromosome.getScore()))+0.02*1/generation);//按照公式变更变异率
-            chromosome.setRatio(Md+0.01*(Math.abs(1-dGenerationMaxScore/chromosome.getScore()))+0.01*1/generation);//按照公式变更变异率
+            chromosome.setRatio(Md+0.01*(Math.abs(1-dGenerationMaxScore/(chromosome.getScore()+1)))+0.01*1/generation);//按照公式变更变异率
         }
         /***
          * 调整染色体数组的邻居列表和信赖值（需要在全部变异完之后进行）

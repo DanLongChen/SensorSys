@@ -6,7 +6,6 @@ import java.util.*;
  */
 /**
  * 流网络
- * @author sdu20
  *
  */
 public class Graph {
@@ -14,7 +13,19 @@ public class Graph {
     private int vNum;
     private int eNum;
     private Gf gf;
-    private LinkedList<Edge1>[] GLists;
+    private LinkedList<Edge1>[] GLists;//邻接表实现，想要找到顶点的入度>2（求邻接表的逆邻接表）
+    public int getvNum(){
+        return vNum;
+    }
+    public int geteNum(){
+        return eNum;
+    }
+    public void seteNum(int eNum){
+        this.eNum=eNum;
+    }
+    public LinkedList<Edge1>[] getGLists(){
+        return GLists;
+    }
 
     public Graph(int n){
         vNum = n;
@@ -131,13 +142,35 @@ public class Graph {
     public void bianli(){
         System.out.println("共有 "+vNum+" 个顶点， "+eNum+" 条边");
         for(int i = 0;i<vNum;i++){
-            if(GLists[i].size()==0)
+            System.out.println("当前节点："+i);
+            if(GLists[i].size()==0) {
                 continue;
+            }
             for(int j = 0;j<GLists[i].size();j++){
                 Edge1 e = GLists[i].get(j);
                 System.out.println("[ "+e.getV1()+" , "+e.getV2()+" , "+e.getFlow()+" , "+e.getCapacity()+" ]");
             }
         }
+    }
+
+    /**
+     * 获得此图的逆邻接表（来判断入度大于2的节点，判断merge节点）
+     * @return Graph
+     */
+    public Graph reverseGraph(){
+        Graph reverseGraph=new Graph(this.vNum);
+        for(int i=0;i<this.vNum;i++){
+            if(this.GLists[i]==null){
+                continue;
+            }
+            for(int j=0;j<this.GLists[i].size();j++){
+                Edge1 temp=this.GLists[i].get(j);
+                Edge1 newEdge=new Edge1(temp.getV1(),temp.getV2(),temp.getFlow(),temp.getCapacity());
+                reverseGraph.GLists[temp.getV2()].add(newEdge);
+            }
+        }
+        reverseGraph.seteNum(this.eNum);
+        return reverseGraph;
     }
 
     public void showResult(){

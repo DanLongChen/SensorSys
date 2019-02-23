@@ -34,7 +34,7 @@ public class GADecode {//最后输出结果
      }*/
 
     /***
-     * 计算单条染色体的适应度
+     * 计算单条染色体的适应度(节点个数)
      * @param chromosome（染色体）
      */
     public static void setScore(Chromosome chromosome) {
@@ -61,7 +61,7 @@ public class GADecode {//最后输出结果
                     count=0;
                     break;//跳出这次循环
                 }
-                if (i % gene.getGeneIn() == 0) {
+                if (i % gene.getGeneIn() == 0) {//计算第二个输出节点
                     count = 0;
                 }
             }
@@ -85,7 +85,7 @@ public class GADecode {//最后输出结果
     }
 
     /***
-     * 获得染色体数组中的最大适应度值
+     * 获得染色体数组中的最大适应度值（分数最小的）
      * @param list（染色体数组）
      * @return
      */
@@ -99,6 +99,22 @@ public class GADecode {//最后输出结果
         });
 //        temp.clear();
         return temp.get(0).getScore();
+    }
+
+    /**
+     * 获取染色体的平均分数
+     * @param list
+     * @return
+     */
+    public static double getAvgScore(List<Chromosome> list){
+        double avg=0;
+        int length=list.size();
+        int sum=0;
+        for (int i=0;i<list.size();i++){
+            sum+=list.get(i).getScore();
+        }
+        avg=sum/length;
+        return avg;
     }
 
     /**
