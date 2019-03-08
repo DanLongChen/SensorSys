@@ -27,6 +27,10 @@ public class Graph {
         return GLists;
     }
 
+    public void setGLists(LinkedList<Edge1>[] GLists) {
+        this.GLists = GLists;
+    }
+
     public Graph(int n){
         vNum = n;
         eNum = 0;
@@ -143,7 +147,7 @@ public class Graph {
         System.out.println("共有 "+vNum+" 个顶点， "+eNum+" 条边");
         for(int i = 0;i<vNum;i++){
             System.out.println("当前节点："+i);
-            if(GLists[i].size()==0) {
+            if(GLists[i]==null||GLists[i].size()==0) {
                 continue;
             }
             for(int j = 0;j<GLists[i].size();j++){

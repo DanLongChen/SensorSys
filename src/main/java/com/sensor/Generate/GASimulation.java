@@ -1,6 +1,7 @@
 package com.sensor.Generate;
 
 import ch.qos.logback.core.util.TimeUtil;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.sensor.Ford_Fulkerson.GANetwork;
 import com.sensor.Ford_Fulkerson.Graph;
 import com.sensor.Ford_Fulkerson.GraphResolve;
@@ -8,6 +9,7 @@ import com.sensor.GATools.*;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
 import com.sensor.entity.MergeNode;
+import com.sun.prism.shader.Solid_TextureYV12_AlphaTest_Loader;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Time;
@@ -369,7 +371,14 @@ public class GASimulation extends Simulation {
     }
 
     public static void main(String[] args) {
-        GASimulation simulation=new GASimulation();
-        simulation.doAllGA();
+//        GASimulation simulation=new GASimulation();
+//        simulation.doAllGA();
+        Graph graph=GANetwork.test();
+        GraphResolve.changeToLinearGraph(graph).bianli();
+//        List<MergeNode> list = GraphResolve.getMergeNode(graph);
+//        for(int i=0;i<list.size();i++){
+//            System.out.println(list.get(i).toString());
+//        }
+
     }
 }
