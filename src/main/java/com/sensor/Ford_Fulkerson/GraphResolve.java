@@ -1,5 +1,6 @@
 package com.sensor.Ford_Fulkerson;
 
+import com.sensor.entity.Chromosome;
 import com.sensor.entity.MergeNode;
 
 import java.util.ArrayList;
@@ -12,15 +13,21 @@ import java.util.List;
 public class GraphResolve {
     /**
      * 进行图分解（1：找出可以分解的节点，2：进行分解）
+     * @param graph 原始的图
+     * @param chromosome    获得的染色体
+     * @return
+     */
+    public static Graph startresolve(Graph graph, Chromosome chromosome){
+        List<MergeNode> list=getMergeNode(graph);//获得可能的编码节点（与染色体中的基因相对应）
+        return new Graph(10);
+
+    }
+
+    /**
+     * 获取可能的编码节点
      * @param graph
      * @return
      */
-    public static Graph startresolve(Graph graph){
-        Graph newGraph=new Graph(graph.getvNum());
-        Graph temp=graph.reverseGraph();
-
-        return newGraph;
-    }
     public static List<MergeNode> getMergeNode(Graph graph){
         Graph temp=graph.reverseGraph();
         temp.bianli();
