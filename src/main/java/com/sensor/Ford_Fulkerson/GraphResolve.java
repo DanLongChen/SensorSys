@@ -2,7 +2,6 @@ package com.sensor.Ford_Fulkerson;
 
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.MergeNode;
-import com.sun.corba.se.impl.orbutil.DenseIntMapImpl;
 import org.ejml.data.DenseMatrix64F;
 
 import java.util.ArrayList;
@@ -64,7 +63,13 @@ public class GraphResolve {
      * @return
      */
     public static DenseMatrix64F[] getGraphB(Graph graph,int R,int E){
-        //首先获取点网络的逆邻接矩阵，获得接收节点
+        //获取没有出度的节点（Edge1），也就是接收节点
+        int length=graph.getGLists().length;
+        for (int i=0;i<length;i++){
+            if (graph.getGLists()[i].size()==0){
+                System.out.println(i);
+            }
+        }
         DenseMatrix64F[] result=new DenseMatrix64F[9];
         return result;
     }

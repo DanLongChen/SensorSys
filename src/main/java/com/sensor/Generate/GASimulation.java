@@ -371,7 +371,7 @@ public class GASimulation extends Simulation {
         Graph graph=GANetwork.test();
 //        System.out.println(Arrays.toString(GraphResolve.getMergeNode(GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)),false).toArray()));
 //        System.out.println(GraphResolve.getGraphA(graph,2,GraphResolve.changeToLinearGraph(graph).getGLists().length).toString());
-        GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)).bianli();
+        GraphResolve.getGraphB(graph,2,10);
 
     }
 }
