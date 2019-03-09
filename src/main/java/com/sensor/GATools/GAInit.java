@@ -22,7 +22,7 @@ public class GAInit {
             Chromosome SGAChromosome = new Chromosome(i, 0);
             for (int j = 0; j < mergeNodeList.size(); j++) {
                 if (mergeNodeList.get(j).out != 0) {
-                    Gene gene = new Gene(mergeNodeList.get(j).in, mergeNodeList.get(j).out);//输入in和out，以后用数组代替
+                    Gene gene = new Gene(mergeNodeList.get(j).id,mergeNodeList.get(j).in, mergeNodeList.get(j).out);//输入in和out，以后用数组代替
                     gene.Init();//初始化基因
                     SGAChromosome.getList().add(gene);
                 }
@@ -35,7 +35,7 @@ public class GAInit {
         Chromosome add = new Chromosome(population - 1, 0);
         for (int i = 0; i < mergeNodeList.size(); i++) {
             if(mergeNodeList.get(i).out!=0) {
-                Gene gene = new Gene(mergeNodeList.get(i).in, mergeNodeList.get(i).out);
+                Gene gene = new Gene(mergeNodeList.get(i).id,mergeNodeList.get(i).in, mergeNodeList.get(i).out);
                 for (int out = 0; out < gene.getGeneOut(); out++) {
                     Boolean[] in = new Boolean[gene.getGeneIn()];
                     for (int gIn = 0; gIn < gene.getGeneIn(); gIn++) {
@@ -61,7 +61,7 @@ public class GAInit {
             Chromosome mchromosome = new Chromosome(i, ratio);
             for (int j = 0; j < mergeNodeList.size(); j++) {
                 if (mergeNodeList.get(j).out != 0) {
-                    Gene gene = new Gene(mergeNodeList.get(j).in, mergeNodeList.get(j).out);//输入in和out，以后用数组代替
+                    Gene gene = new Gene(mergeNodeList.get(j).id,mergeNodeList.get(j).in, mergeNodeList.get(j).out);//输入in和out，以后用数组代替
                     gene.Init();//初始化基因
                     mchromosome.getList().add(gene);
                 }

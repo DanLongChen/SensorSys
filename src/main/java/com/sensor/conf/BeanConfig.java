@@ -16,7 +16,7 @@ public class BeanConfig {
     }
     @Bean
     public Gene getGene(){
-        return new Gene(0,0);
+        return new Gene(0,0,0);
     }
 
 }

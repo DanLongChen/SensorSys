@@ -1,18 +1,13 @@
 package com.sensor.Generate;
 
-import ch.qos.logback.core.util.TimeUtil;
-import com.fasterxml.jackson.databind.node.IntNode;
 import com.sensor.Ford_Fulkerson.GANetwork;
 import com.sensor.Ford_Fulkerson.Graph;
 import com.sensor.Ford_Fulkerson.GraphResolve;
 import com.sensor.GATools.*;
 import com.sensor.entity.Chromosome;
-import com.sensor.entity.Gene;
 import com.sensor.entity.MergeNode;
-import com.sun.prism.shader.Solid_TextureYV12_AlphaTest_Loader;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +73,7 @@ public class GASimulation extends Simulation {
          * 网络图部分
          */
         Graph graph= GANetwork.initNetwork(3);
-        List<MergeNode> list= GraphResolve.getMergeNode(graph);//获得可能的编码节点
+        List<MergeNode> list= GraphResolve.getMergeNode(graph,false);//获得可能的编码节点
         /**
          * 清空染色体数组
          */
@@ -104,7 +99,7 @@ public class GASimulation extends Simulation {
 
     private void initSGA() {
         Graph graph= GANetwork.initNetwork(3);
-        List<MergeNode> list= GraphResolve.getMergeNode(graph);//获得可能的编码节点
+        List<MergeNode> list= GraphResolve.getMergeNode(graph, false);//获得可能的编码节点
         /**
          * 清空染色体数组
          */
@@ -117,7 +112,7 @@ public class GASimulation extends Simulation {
 
     private void initMGA() {
         Graph graph= GANetwork.initNetwork(3);
-        List<MergeNode> list= GraphResolve.getMergeNode(graph);//获得可能的编码节点
+        List<MergeNode> list= GraphResolve.getMergeNode(graph,false);//获得可能的编码节点
         MGAList.clear();
 
         GAInit.initPopulation(MGAList, MGAPopulation, list, 0);
@@ -374,11 +369,9 @@ public class GASimulation extends Simulation {
 //        GASimulation simulation=new GASimulation();
 //        simulation.doAllGA();
         Graph graph=GANetwork.test();
-        GraphResolve.changeToLinearGraph(graph).bianli();
-//        List<MergeNode> list = GraphResolve.getMergeNode(graph);
-//        for(int i=0;i<list.size();i++){
-//            System.out.println(list.get(i).toString());
-//        }
+//        System.out.println(Arrays.toString(GraphResolve.getMergeNode(GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)),false).toArray()));
+//        System.out.println(GraphResolve.getGraphA(graph,2,GraphResolve.changeToLinearGraph(graph).getGLists().length).toString());
+        GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)).bianli();
 
     }
 }

@@ -20,7 +20,7 @@ public class GATestTools {
         for (int i = 0; i < 10; i++) {//加载假数据
             Chromosome temp = new Chromosome(i, 0.09);
             for (int j = 0; j < 3; j++) {
-                Gene gene = new Gene(2, 3);
+                Gene gene = new Gene(0,2, 3);
                 gene.Init();
                 temp.list.add(gene);
             }

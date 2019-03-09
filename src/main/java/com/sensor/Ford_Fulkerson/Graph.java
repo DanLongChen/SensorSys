@@ -164,7 +164,7 @@ public class Graph {
     public Graph reverseGraph(){
         Graph reverseGraph=new Graph(this.vNum);
         for(int i=0;i<this.vNum;i++){
-            if(this.GLists[i]==null){
+            if(this.GLists[i]==null || this.GLists[i].size()==0){
                 continue;
             }
             for(int j=0;j<this.GLists[i].size();j++){
