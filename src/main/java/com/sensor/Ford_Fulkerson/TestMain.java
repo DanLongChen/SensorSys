@@ -53,7 +53,7 @@ public class TestMain {
         for(int i = 0;i<9;i++)
             graph.insertEdge(edges[i]);
 
-        graph.bianli();
+//        graph.bianli();
 
         graph.MaxFlow();
         graph.showResult();
@@ -73,7 +73,7 @@ public class TestMain {
         edges[8] = new Edge1(4,5,0,4);
         for(int i = 0;i<9;i++)
             graph.insertEdge(edges[i]);
-        graph.reverseGraph().bianli();
+//        graph.reverseGraph().bianli();
     }
 }
 

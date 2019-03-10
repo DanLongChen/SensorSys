@@ -4,6 +4,9 @@ package com.sensor.Ford_Fulkerson;
  * Created by Paser on 2019/2/20.
  */
 public class GANetwork {
+    public static Graph getNetwork(){
+        return initNetwork(3);
+    }
     public static Graph test(){
         Graph graph=new Graph(5);
         Edge1[] edge1=new Edge1[8];
@@ -18,7 +21,7 @@ public class GANetwork {
         for(int i=0;i<8;i++){
             graph.insertEdge(edge1[i]);
         }
-        graph.bianli();
+//        graph.bianli();
         return graph;
     }
     public static Graph initNetwork(int copyNumber){
@@ -29,7 +32,7 @@ public class GANetwork {
     }
     public static Graph Onetwork(){//一次复制网络
         Graph graph=new Graph(7);
-        Edge1[] edge1=new Edge1[9];
+        Edge1[] edge1=new Edge1[10];
         edge1[0]=new Edge1(0,1,0,1);
         edge1[1]=new Edge1(0,2,0,1);
         edge1[2]=new Edge1(1,3,0,1);
@@ -38,8 +41,9 @@ public class GANetwork {
         edge1[5]=new Edge1(2,6,0,1);
         edge1[6]=new Edge1(4,5,0,1);
         edge1[7]=new Edge1(4,6,0,1);
-        edge1[8]=new Edge1(3,4,0,2);
-        for(int i=0;i<9;i++){
+        edge1[8]=new Edge1(3,4,0,1);
+        edge1[9]=new Edge1(3,4,0,1);
+        for(int i=0;i<10;i++){
             graph.insertEdge(edge1[i]);
         }
 
@@ -81,7 +85,7 @@ public class GANetwork {
         for(int i=0;i<30;i++){
             graph.insertEdge(edge1[i]);
         }
-        graph.bianli();
+//        graph.bianli();
         return graph;
     }
     public void SNetwork(){//7次复制网络

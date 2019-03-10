@@ -1,5 +1,7 @@
 package com.sensor.GATools;
 
+import com.sensor.Ford_Fulkerson.GANetwork;
+import com.sensor.Ford_Fulkerson.GraphResolve;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
 import org.junit.jupiter.api.Test;
@@ -44,7 +46,10 @@ public class GADecode {//最后输出结果
         int score = 0;
         int i = 0;
         int count = 0;//中间计数器
-        for (Gene gene : chromosome.getList()) {
+        if(GraphResolve.startresolve(GANetwork.getNetwork(),chromosome)){
+            score=Integer.MAX_VALUE;
+        }else{
+            for (Gene gene : chromosome.getList()) {
             /*for (Boolean b : gene.getList()) {
                 if (b) {
                     score += 1;
@@ -52,17 +57,18 @@ public class GADecode {//最后输出结果
                     score += 0;
                 }
             }*/
-            for (i = 1; i <= gene.getList().size(); i++) {
-                if (gene.getList().get(i - 1) == true) {
-                    count++;
-                }
-                if (count == 2) {
-                    score++;//有两个输入连接，就表示需要编码
-                    count=0;
-                    break;//跳出这次循环
-                }
-                if (i % gene.getGeneIn() == 0) {//计算第二个输出节点
-                    count = 0;
+                for (i = 1; i <= gene.getList().size(); i++) {
+                    if (gene.getList().get(i - 1) == true) {
+                        count++;
+                    }
+                    if (count == 2) {
+                        score++;//有两个输入连接，就表示需要编码
+                        count=0;
+                        break;//跳出这次循环
+                    }
+                    if (i % gene.getGeneIn() == 0) {//计算第二个输出节点
+                        count = 0;
+                    }
                 }
             }
         }

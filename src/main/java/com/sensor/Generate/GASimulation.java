@@ -6,12 +6,9 @@ import com.sensor.Ford_Fulkerson.GraphResolve;
 import com.sensor.GATools.*;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.MergeNode;
-import com.sun.scenario.effect.Merge;
-import org.ejml.data.DenseMatrix64F;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -74,7 +71,8 @@ public class GASimulation extends Simulation {
         /***
          * 网络图部分
          */
-        Graph graph= GANetwork.initNetwork(3);
+        Graph graph= GANetwork.getNetwork();
+        graph=GraphResolve.changeToLinearGraph(graph);//要转化为边表才能使用
         List<MergeNode> list= GraphResolve.getMergeNode(graph,false);//获得可能的编码节点
         /**
          * 清空染色体数组
@@ -100,7 +98,8 @@ public class GASimulation extends Simulation {
     }
 
     private void initSGA() {
-        Graph graph= GANetwork.initNetwork(3);
+        Graph graph= GANetwork.getNetwork();
+        graph=GraphResolve.changeToLinearGraph(graph);//要转化为边表才能使用
         List<MergeNode> list= GraphResolve.getMergeNode(graph, false);//获得可能的编码节点
         /**
          * 清空染色体数组
@@ -113,7 +112,8 @@ public class GASimulation extends Simulation {
     }
 
     private void initMGA() {
-        Graph graph= GANetwork.initNetwork(3);
+        Graph graph= GANetwork.getNetwork();
+        graph=GraphResolve.changeToLinearGraph(graph);//要转化为边表才能使用
         List<MergeNode> list= GraphResolve.getMergeNode(graph,false);//获得可能的编码节点
         MGAList.clear();
 
@@ -368,22 +368,20 @@ public class GASimulation extends Simulation {
     }
 
     public static void main(String[] args) {
-//        GASimulation simulation=new GASimulation();
-//        simulation.doAllGA();
-        Graph graph=GANetwork.initNetwork(3);
-//        System.out.println(Arrays.toString(GraphResolve.getMergeNode(GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)),false).toArray()));
-//        System.out.println(GraphResolve.getGraphA(graph,2,GraphResolve.changeToLinearGraph(graph).getGLists().length).toString());
-//        DenseMatrix64F[] result=GraphResolve.getGraphA(graph,2,8);
-//        for(int i=0;i<result.length;i++){
-//            System.out.println(result[i].toString());
-//        }
-        List<Chromosome> list=new ArrayList<Chromosome>();
-        List<MergeNode> mergeNodeList=GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false);
-        System.out.println("可能的编码节点有："+mergeNodeList.size());
-        GAInit.testPopulation(list,1,GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false),0.1);
-        System.out.println(mergeNodeList.toString());
-        System.out.println(list.get(0).toString());
-        GraphResolve.startresolve(graph,list.get(0));
+        GASimulation simulation=new GASimulation();
+        simulation.doAllGA();
+//        Graph graph=GANetwork.initNetwork(3);
+//        Graph graph=GANetwork.test();
+//        Graph graph=GANetwork.Onetwork();
+//        Graph graph=GANetwork.getNetwork();
+//        List<Chromosome> list=new ArrayList<Chromosome>();
+//        List<MergeNode> mergeNodeList=GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false);
+//        GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)).bianli();
+//        System.out.println("可能的编码节点有："+mergeNodeList.size());
+//        GAInit.testPopulation(list,1,GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false),0.1);
+//        System.out.println(mergeNodeList.toString());
+//        System.out.println(list.get(0).toString());
+//        GraphResolve.startresolve(graph,list.get(0));
 
 
     }

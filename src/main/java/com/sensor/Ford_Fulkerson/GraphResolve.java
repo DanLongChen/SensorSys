@@ -31,35 +31,35 @@ public class GraphResolve {
     public static boolean startresolve(Graph graph,Chromosome chromosome) {
         List<MergeNode> list = getMergeNode(changeToLinearGraph(graph), false);//获得可能的编码节点（与染色体中的基因相对应）
         List<Integer> linearNode=new ArrayList<Integer>();
-        for(Gene gene:chromosome.getList()){
+        for(Gene gene:chromosome.getList()){//获取基因代表的节点，也就是可能编码的节点
             linearNode.add(gene.getId());
         }
 
         Graph linearGraph = changeToLinearGraph(graph);//获取标记线图
         Graph reverseLinearGraph = reverseGraph(linearGraph);//获取标记线图的逆邻接表
-        reverseLinearGraph.bianli();
+//        reverseLinearGraph.bianli();
         int numE = linearGraph.getGLists().length;//获取边的数量
         DenseMatrix64F[] A = getGraphA(graph, 2, numE);
         DenseMatrix64F[] B = getGraphB(graph, 2, numE);
         DenseMatrix64F F = new DenseMatrix64F(numE, numE);
-        int bitNum=-1;
+        int bitNum=0;
         for (int row = 0; row < numE; row++) {
-            bitNum=-1;
             if (reverseLinearGraph.getGLists()[row].size()>=2 ) {
-                for(int i=1;i<reverseLinearGraph.getGLists()[row].size();i++){
-                    for (int col = 0; col < numE; col++) {
+                for(int i=1;i<reverseLinearGraph.getGLists()[row].size();i++){//查找逆标记线图的每一行的节点
+                    bitNum=0;
+                    for (int col = 0; col < numE; col++) {//找出每一行节点对应的下标
                         if(reverseLinearGraph.getGLists()[row].get(i).getV1()==reverseLinearGraph.getGLists()[col].get(0).getV1()
                                 && reverseLinearGraph.getGLists()[row].get(i).getV2()==reverseLinearGraph.getGLists()[col].get(0).getV2()
                                 ){
-                            if(linearNode.contains(row)){
+                            if(linearNode.contains(row)){//表示是合并节点
                                 for (Gene gene:chromosome.getList()){
                                     if(gene.getId()==row){
 //                                        F.set(row, col, gene.getList().get(++bitNum)==true?1:0);
-                                        F.set(row, col, 1);
+                                        F.set(row, col, gene.getList().get(bitNum++)==true?(Math.random()+0.1)*100:0);
                                     }
                                 }
                             }else{
-                                F.set(row, col, 1);
+                                F.set(row, col, (Math.random()+0.1)*100);
                             }
                         }
                     }
@@ -70,21 +70,38 @@ public class GraphResolve {
         }
         DenseMatrix64F I= CommonOps.identity(numE,numE);//设置单位矩阵
         DenseMatrix64F sub=new DenseMatrix64F(numE,numE);//(I-F)的结果
+//        System.out.println("sub: ");
         CommonOps.sub(I,F, sub);
+//        System.out.println(sub);
         DenseMatrix64F inverse=new DenseMatrix64F(numE,numE);
         CommonOps.invert(sub,inverse);//(I-F)-1  求逆的结果
+//        System.out.println("inverse: ");
+//        System.out.println(inverse);
 
+//        System.out.println("Test: ");
+        DenseMatrix64F test=new DenseMatrix64F(numE,numE);
+        CommonOps.mult(sub,inverse,test);
+//        System.out.println(CommonOps.det(test));
+        /**
+         * 以上是矩阵公共部分
+         */
         DenseMatrix64F trans=new DenseMatrix64F(numE, 2);
         CommonOps.transpose(B[0],trans);//求转置
+//        System.out.println("trans: ");
+//        System.out.println(trans);
 
         DenseMatrix64F temp=new DenseMatrix64F(2,numE);
         CommonOps.mult(A[0],inverse,temp);
         DenseMatrix64F result=new DenseMatrix64F(2,2);
         CommonOps.mult(temp,trans,result);
+//        System.out.println("result: ");
+//        System.out.println(result);
 
-        System.out.println(F.toString());
-        System.out.println(CommonOps.det(result));
-        return true;
+//        System.out.println(F.toString());
+        double viable=CommonOps.det(result);
+//        System.out.println(viable);
+//        System.out.println("The judge is: "+(viable==0));
+        return viable==0;
     }
 
     /**
@@ -115,7 +132,7 @@ public class GraphResolve {
             for (int row = 0; row < R; row++) {
                 for (int j = 0; j < list.length; j++) {
                     if (list[j].get(0).getV1() == from) {
-                        result[i].set(row, j, 1);
+                        result[i].set(row, j, (Math.random()+0.1)*100);
                     } else {
                         result[i].set(row, j, 0);
                     }
@@ -153,7 +170,7 @@ public class GraphResolve {
             for (int r = 0; r < R; r++) {
                 for (int j = 0; j < linearList.length; j++) {
                     if (linearList[j].get(0).getV2() == to) {
-                        result[i].set(r, j, 1);
+                        result[i].set(r, j, (Math.random()+0.1)*100);
                     } else {
                         result[i].set(r, j, 0);
                     }
