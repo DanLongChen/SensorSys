@@ -6,6 +6,8 @@ import com.sensor.Ford_Fulkerson.GraphResolve;
 import com.sensor.GATools.*;
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.MergeNode;
+import com.sun.scenario.effect.Merge;
+import org.ejml.data.DenseMatrix64F;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -368,10 +370,21 @@ public class GASimulation extends Simulation {
     public static void main(String[] args) {
 //        GASimulation simulation=new GASimulation();
 //        simulation.doAllGA();
-        Graph graph=GANetwork.test();
+        Graph graph=GANetwork.initNetwork(3);
 //        System.out.println(Arrays.toString(GraphResolve.getMergeNode(GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)),false).toArray()));
 //        System.out.println(GraphResolve.getGraphA(graph,2,GraphResolve.changeToLinearGraph(graph).getGLists().length).toString());
-        GraphResolve.getGraphB(graph,2,10);
+//        DenseMatrix64F[] result=GraphResolve.getGraphA(graph,2,8);
+//        for(int i=0;i<result.length;i++){
+//            System.out.println(result[i].toString());
+//        }
+        List<Chromosome> list=new ArrayList<Chromosome>();
+        List<MergeNode> mergeNodeList=GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false);
+        System.out.println("可能的编码节点有："+mergeNodeList.size());
+        GAInit.testPopulation(list,1,GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false),0.1);
+        System.out.println(mergeNodeList.toString());
+        System.out.println(list.get(0).toString());
+        GraphResolve.startresolve(graph,list.get(0));
+
 
     }
 }

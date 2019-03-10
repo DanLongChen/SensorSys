@@ -70,6 +70,26 @@ public class GAInit {
         }
     }
 
+    public static void testPopulation(List<Chromosome> list, int population, List<MergeNode> mergeNodeList, double ratio) {
+        for (int i = 0; i < population; i++) {//初始化种群的染色体
+            Chromosome mchromosome = new Chromosome(i, ratio);
+            for (int j = 0; j < mergeNodeList.size(); j++) {
+                if (mergeNodeList.get(j).out != 0) {
+                    Gene gene = new Gene(mergeNodeList.get(j).id,mergeNodeList.get(j).in, mergeNodeList.get(j).out);//输入in和out，以后用数组代替
+                    for (int out = 0; out < gene.getGeneOut(); out++) {
+                        Boolean[] in = new Boolean[gene.getGeneIn()];
+                        for (int gIn = 0; gIn < gene.getGeneIn(); gIn++) {
+                            in[gIn] = true;
+                        }
+                        gene.getList().addAll(Arrays.asList(in));
+                    }
+                    mchromosome.getList().add(gene);
+                }
+            }
+            list.add(mchromosome);
+        }
+    }
+
     /***
      * 初始化种群的邻居队列和信赖域
      * @param list（种群数组）

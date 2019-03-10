@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @versioin:2018年11月14日下午2:59:36
  **/
 public class Gene implements Serializable {// 表示一个基因
-	public int id;//对应于哪一个节点
+	public int id;//对应于哪一个节点(标记线图中的节点)
 	public List<Boolean> list=new ArrayList<Boolean>();// 基因的bit位
 	public int GeneIn = 0;// 输入链路数量
 	public int GeneOut = 0;// 输出链路数量
@@ -29,7 +29,7 @@ public class Gene implements Serializable {// 表示一个基因
 
 	@Override
 	public String toString() {
-		return Arrays.toString(list.toArray());
+		return id+" "+Arrays.toString(list.toArray());
 	}
 
 	public List<Boolean> getList() {
