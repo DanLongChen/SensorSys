@@ -2,6 +2,7 @@ package com.sensor.entity;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,8 +14,8 @@ public class Chromosome implements Serializable{// 表示一条染色体
     public List<Gene> list = new ArrayList<Gene>();// 染色体中的基因组
     public double ratio;// 染色体变异率
     public int score = 0;// 适应度值
-    public List<Integer> Nlist = new ArrayList<Integer>();// 染色体的邻居队列(存储染色体的ID)
-    public List<Double> trust = new ArrayList<Double>();//邻居的信赖域列表(与邻居队列一一对应)
+    public List<Integer> Nlist = new LinkedList<Integer>();// 染色体的邻居队列(存储染色体的ID)
+    public List<Double> trust = new LinkedList<Double>();//邻居的信赖域列表(与邻居队列一一对应)
 
     public Chromosome(int id, double ratio) {
         this.id = id;

@@ -28,7 +28,7 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
         for (Chromosome chromosome : list) {
             int position = chromosome.getNlist().get((int) Math.floor(Math.random() * chromosome.getNlist().size()));//获得邻居队列中的染色体(染色体ID)
 //            System.out.println("position:"+position);
-            CanShuHuaSingleCross(list, chromosome, newList.get(GAFindChromosomeById.findById(newList, position)).deepClone(), crossRatio);//这里邻居列表的染色体从原数组拿取
+           doZJBSingleCross(list, chromosome, newList.get(GAFindChromosomeById.findById(newList, position)).deepClone(), crossRatio);//这里邻居列表的染色体从原数组拿取
         }
     }
 
@@ -44,7 +44,7 @@ public class GACross {//染色体交叉，只与自己的邻居队列中的染�
         for (Chromosome chromosome : list) {
             int position = (int) Math.floor(Math.random() * list.size());//从列表随机取一个数
 //            System.out.println("position: "+position);
-            CanShuHuaSingleCross(list, chromosome, newList.get(position).deepClone(), crossRatio);//第二条染色体从原来的染色体数组拿，而不是交叉之后的染色体数组
+            doZJBSingleCross(list, chromosome, newList.get(position).deepClone(), crossRatio);//第二条染色体从原来的染色体数组拿，而不是交叉之后的染色体数组
         }
     }
 

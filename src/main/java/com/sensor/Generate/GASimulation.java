@@ -22,14 +22,14 @@ public class GASimulation extends Simulation {
     private List<Chromosome> mList = new ArrayList<Chromosome>();//两个种群
     private List<Chromosome> fList = new ArrayList<Chromosome>();
     private List<Chromosome> tList = new ArrayList<Chromosome>();//合并之后的种群
-    private int mPopulation = 100;//种群数量
-    private int fPopulation = 100;
+    private int mPopulation = 75;//种群数量
+    private int fPopulation = 75;
     private double mMutationRatio = 0.09;//种群基础变异率
     private double fMutatioinRatio = 0.01;
     private double mutationRatio = 0.09;//合并之后的基础变异率
     private double crossRatio = 0.8;//交叉率
-    private int maxGeneration = 50;//最大代数
-    private int zjGeneration = 15;//种间杂交发生的代数
+    private int maxGeneration = 100;//最大代数
+    private int zjGeneration = 50;//种间杂交发生的代数
     /***
      * 染色体控制参数
      */
@@ -49,19 +49,19 @@ public class GASimulation extends Simulation {
      * SGA种群控制参数
      */
     private List<Chromosome> SGAList = new ArrayList<Chromosome>();//初始化染色体数组
-    private int SGAPopulation = 200;//初始化种群数量
+    private int SGAPopulation = 150;//初始化种群数量
     private double SGAMutationRatio = 0.01;//变异概率
     private double SGACrossRatio = 0.8;//交叉概率
-    private int SGAmaxGeneration = 50;//最大代数
+    private int SGAmaxGeneration = 100;//最大代数
 
     /**
      * MGA种群控制参数
      */
     private List<Chromosome> MGAList = new ArrayList<Chromosome>();//初始化染色体数组
-    private int MGAPopulation = 200;//种群大小
+    private int MGAPopulation = 150;//种群大小
     private double MGAMutationRatio = 0.09;//变异概率
     private double MGACrossRatio = 0.8;//交叉概率
-    private int MGAmaxGeneration = 50;//最大代数
+    private int MGAmaxGeneration = 100;//最大代数
 
     /***
      * 初始化染色体种群
@@ -255,7 +255,7 @@ public class GASimulation extends Simulation {
         int dGeneration = 0;//当前代数
         int sameGeneration = 0;//相似染色体代数
         GASelection selection = new GASelection();//选择器
-        selection.setFlag(false);
+        selection.setFlag(true);
         while (dGeneration < SGAmaxGeneration) {
             /**
              * 计算适应度
@@ -265,7 +265,7 @@ public class GASimulation extends Simulation {
             /**
              *染色体选择
              */
-            selection.jinSelection(SGAList);
+            selection.duSelection(SGAList);
             selection.idSort(SGAList);
             /**
              * 染色体交叉
@@ -369,19 +369,23 @@ public class GASimulation extends Simulation {
 
     public static void main(String[] args) {
         GASimulation simulation=new GASimulation();
-        simulation.doAllGA();
-//        Graph graph=GANetwork.initNetwork(3);
-//        Graph graph=GANetwork.test();
-//        Graph graph=GANetwork.Onetwork();
-//        Graph graph=GANetwork.getNetwork();
-//        List<Chromosome> list=new ArrayList<Chromosome>();
-//        List<MergeNode> mergeNodeList=GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false);
-//        GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)).bianli();
-//        System.out.println("可能的编码节点有："+mergeNodeList.size());
-//        GAInit.testPopulation(list,1,GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false),0.1);
-//        System.out.println(mergeNodeList.toString());
-//        System.out.println(list.get(0).toString());
-//        GraphResolve.startresolve(graph,list.get(0));
+//        simulation.doAllGA();
+//        List<Integer> list = new ArrayList<Integer>();
+//        simulation.doSGA(list);
+//        simulation.doMyGA(list);
+////        System.out.println();
+
+        Graph graph=GANetwork.getNetwork();
+        List<Chromosome> list=new ArrayList<Chromosome>();
+        List<MergeNode> mergeNodeList=GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false);
+        GraphResolve.reverseGraph(GraphResolve.changeToLinearGraph(graph)).bianli();
+        System.out.println("可能的编码节点有："+mergeNodeList.size());
+
+
+        GAInit.testPopulation(list,1,GraphResolve.getMergeNode(GraphResolve.changeToLinearGraph(graph),false),0.1);
+        System.out.println(mergeNodeList.toString());
+        System.out.println(list.get(0).toString());
+        System.out.println(GraphResolve.startresolve(graph,list.get(0)));
 
 
     }

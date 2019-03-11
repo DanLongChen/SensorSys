@@ -6,8 +6,6 @@ import com.sensor.entity.MergeNode;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-import javax.security.auth.Subject;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,26 +38,58 @@ public class GraphResolve {
 //        reverseLinearGraph.bianli();
         int numE = linearGraph.getGLists().length;//获取边的数量
         DenseMatrix64F[] A = getGraphA(graph, 2, numE);
-        DenseMatrix64F[] B = getGraphB(graph, 2, numE);
+        DenseMatrix64F[] B = getGraphB(graph, 2, numE);//接收节点的矩阵数组
         DenseMatrix64F F = new DenseMatrix64F(numE, numE);
         int bitNum=0;
-        for (int row = 0; row < numE; row++) {
-            if (reverseLinearGraph.getGLists()[row].size()>=2 ) {
-                for(int i=1;i<reverseLinearGraph.getGLists()[row].size();i++){//查找逆标记线图的每一行的节点
+        /**
+         * 以逆标记线图来求解F矩阵(这样求解的F在全编码的情况下好像无效)
+         */
+//        for (int row = 0; row < numE; row++) {
+//            if (reverseLinearGraph.getGLists()[row].size()>=2 ) {
+//                for(int i=1;i<reverseLinearGraph.getGLists()[row].size();i++){//查找逆标记线图的每一行的节点
+//                    bitNum=0;
+//                    for (int col = 0; col < numE; col++) {//找出每一行节点对应的下标
+//                        if(reverseLinearGraph.getGLists()[row].get(i).getV1()==reverseLinearGraph.getGLists()[col].get(0).getV1()
+//                                && reverseLinearGraph.getGLists()[row].get(i).getV2()==reverseLinearGraph.getGLists()[col].get(0).getV2()
+//                                ){
+//                            if(linearNode.contains(row)){//表示是合并节点
+//                                for (Gene gene:chromosome.getList()){
+//                                    if(gene.getId()==row){
+////                                        F.set(row, col, gene.getList().get(++bitNum)==true?1:0);
+//                                        F.set(row, col, gene.getList().get(bitNum++)==true?(Math.random()+0.1)*100:0);
+//                                    }
+//                                }
+//                            }else{
+//                                F.set(row, col, (Math.random()+0.6)*100);
+//                            }
+//                        }
+//                    }
+//                }
+//            }else{
+//                continue;
+//            }
+//        }
+
+        /**
+         * 以标记线图来求解F（在全编码的情况下是有效的）
+         */
+        for(int row=0;row<numE;row++){
+            if (linearGraph.getGLists()[row].size()>=2 ) {
+                for(int i=1;i<linearGraph.getGLists()[row].size();i++){//查找逆标记线图的每一行的节点
                     bitNum=0;
                     for (int col = 0; col < numE; col++) {//找出每一行节点对应的下标
-                        if(reverseLinearGraph.getGLists()[row].get(i).getV1()==reverseLinearGraph.getGLists()[col].get(0).getV1()
-                                && reverseLinearGraph.getGLists()[row].get(i).getV2()==reverseLinearGraph.getGLists()[col].get(0).getV2()
-                                ){
+                        if(linearGraph.getGLists()[row].get(i).getV1()==linearGraph.getGLists()[col].get(0).getV1()
+                                && linearGraph.getGLists()[row].get(i).getV2()==linearGraph.getGLists()[col].get(0).getV2()
+                        ){
                             if(linearNode.contains(row)){//表示是合并节点
                                 for (Gene gene:chromosome.getList()){
                                     if(gene.getId()==row){
 //                                        F.set(row, col, gene.getList().get(++bitNum)==true?1:0);
-                                        F.set(row, col, gene.getList().get(bitNum++)==true?(Math.random()+0.1)*100:0);
+                                        F.set(row, col, gene.getList().get(bitNum++)==true?(Math.random()+0.6)*1000:0);
                                     }
                                 }
                             }else{
-                                F.set(row, col, (Math.random()+0.1)*100);
+                                F.set(row, col, (Math.random()+0.6)*1000);
                             }
                         }
                     }
@@ -68,6 +98,8 @@ public class GraphResolve {
                 continue;
             }
         }
+//        System.out.println("矩阵F：");
+//        System.out.println(F);
         DenseMatrix64F I= CommonOps.identity(numE,numE);//设置单位矩阵
         DenseMatrix64F sub=new DenseMatrix64F(numE,numE);//(I-F)的结果
 //        System.out.println("sub: ");
@@ -85,23 +117,26 @@ public class GraphResolve {
         /**
          * 以上是矩阵公共部分
          */
-        DenseMatrix64F trans=new DenseMatrix64F(numE, 2);
-        CommonOps.transpose(B[0],trans);//求转置
-//        System.out.println("trans: ");
-//        System.out.println(trans);
-
-        DenseMatrix64F temp=new DenseMatrix64F(2,numE);
+        int numOfD=0;//能解码的接收节点的数量
+        DenseMatrix64F trans=new DenseMatrix64F(numE, 2);//B矩阵的转置
+        DenseMatrix64F temp=new DenseMatrix64F(2,numE);//矩阵A*(I-F)的转置
         CommonOps.mult(A[0],inverse,temp);
         DenseMatrix64F result=new DenseMatrix64F(2,2);
-        CommonOps.mult(temp,trans,result);
-//        System.out.println("result: ");
-//        System.out.println(result);
-
-//        System.out.println(F.toString());
-        double viable=CommonOps.det(result);
-//        System.out.println(viable);
-//        System.out.println("The judge is: "+(viable==0));
-        return viable==0;
+        for(int i=0;i<B.length;i++){
+            CommonOps.transpose(B[i],trans);//求转置
+            CommonOps.mult(temp,trans,result);
+//            System.out.println(result);
+            double viable=CommonOps.det(result);
+            System.out.println(viable);
+            if(viable!=0){
+                numOfD++;
+            }
+        }
+        if(numOfD==B.length){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**
@@ -132,7 +167,7 @@ public class GraphResolve {
             for (int row = 0; row < R; row++) {
                 for (int j = 0; j < list.length; j++) {
                     if (list[j].get(0).getV1() == from) {
-                        result[i].set(row, j, (Math.random()+0.1)*100);
+                        result[i].set(row, j, (Math.random()+0.2)*1000);
                     } else {
                         result[i].set(row, j, 0);
                     }
@@ -170,7 +205,7 @@ public class GraphResolve {
             for (int r = 0; r < R; r++) {
                 for (int j = 0; j < linearList.length; j++) {
                     if (linearList[j].get(0).getV2() == to) {
-                        result[i].set(r, j, (Math.random()+0.1)*100);
+                        result[i].set(r, j, (Math.random()+0.3)*1000);
                     } else {
                         result[i].set(r, j, 0);
                     }

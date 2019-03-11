@@ -2,7 +2,6 @@ package com.sensor.GATools;
 
 import com.sensor.entity.Chromosome;
 import com.sensor.entity.Gene;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,9 @@ public class GAMutation {
         /***
          * 这个汉明距离有待商榷
          */
-        int K=(int) (GAGetChromosomeLength.getLength(list.get(0))*0.1);//韩明重量的范围值
+//        System.out.println("种群大小："+list.size());
+//        int K=(int) (GAGetChromosomeLength.getLength(list.get(0))*0.1);//韩明重量的范围值
+        int K=2;
         for(Chromosome chromosome:list){//对染色体中的每一条染色体执行变异，然后调整其变异率
             double ratio=Math.random();
             if(ratio<=chromosome.getRatio()){//与染色体各自的变异率进行比较
@@ -40,14 +41,18 @@ public class GAMutation {
             }
 //            System.out.println(Md+0.03*(Math.abs(1-chromosome.getScore()/GADecode.getMaxScore(list)))+0.02*1/generation);
 //            chromosome.setRatio(Md+0.03*(Math.abs(1-GADecode.getMaxScore(list)/chromosome.getScore()))+0.02*1/generation);//按照公式变更变异率
-            chromosome.setRatio(Md+0.01*(Math.abs(1-dGenerationMaxScore/(chromosome.getScore()+1)))+0.01*1/generation);//按照公式变更变异率
+//            chromosome.setRatio(Md+0.01*(Math.abs(1-dGenerationMaxScore/(chromosome.getScore()+1)))+0.01*1/generation);//按照公式变更变异率
+            chromosome.setRatio(Md+0.3*(Math.abs(dGenerationMaxScore-chromosome.getScore()))+0.1*1/generation);//按照公式变更变异率
         }
         /***
          * 调整染色体数组的邻居列表和信赖值（需要在全部变异完之后进行）
          */
         for (Chromosome chromosome:list){
             int ownScore=GADecode.getScore(chromosome);//获取自身的score
-            for(int i=0;i<chromosome.getNlist().size();i++){
+            for(int i=0;i<chromosome.getNlist().size();i++){//对于染色体对应的邻居列表中的每一个元素
+                if(chromosome.getNlist().get(i)==chromosome.getId()){
+                    continue;
+                }
                 int neiborScore=GADecode.getScore(list.get(GAFindChromosomeById.findById(list,chromosome.getNlist().get(i))));
                 if(Math.abs(ownScore-neiborScore)<=K){//汉明距离在范围之内
                     //########################################可以做下实验，验证下 chromosome.getTrust().set(i,chromosome.getTrust().get(i))这样能否成功
@@ -66,35 +71,37 @@ public class GAMutation {
                  * 在设置完信赖域之后，如果满足剔除条件的则剔除（同样双方都要剔除），然后随机选择新的染色体加入
                  */
                 if (chromosome.getTrust().get(i)<-1){
-                    int neiborNumber=chromosome.getNlist().get(i);
-                    chromosome.getNlist().remove(i);
+                    int neiborNumber=chromosome.getNlist().get(i);//获得邻居染色体ID
+                    chromosome.getNlist().remove(i);//本染色体需要移除信赖值<-1的邻居，那么邻居也需要移除本染色体
                     chromosome.getTrust().remove(i);
+                    System.out.println("neiborNumber:"+neiborNumber+"    "+chromosome.getId()+"     "+list.get(neiborNumber).getNlist().indexOf(chromosome.getId()));
                     list.get(neiborNumber).getTrust().remove(list.get(neiborNumber).getNlist().indexOf(chromosome.getId()));//得到i在Nlist中的下标，然后从邻居的Trust中移除
                     list.get(neiborNumber).getNlist().remove(chromosome.getId());
                 }
             }
-            if (chromosome.getNlist().size()<list.size()*neiborRatio){
+            if (chromosome.getNlist().size()<list.size()*neiborRatio){//邻居队列的数量不足，随机挑选染色体数组中的染色体加入邻居队列
                 /**
                  * 同时被加进去的邻居也要加入当前染色体作为邻居
                  */
                 while (chromosome.getNlist().size()<list.size()*neiborRatio){
                     int neiborAddPoint=(int) Math.floor(Math.random()*list.size());
-                    if(chromosome.getNlist().contains(neiborAddPoint) || neiborAddPoint==chromosome.getId()){//若有重复则重新插入
+                    if(chromosome.getNlist().contains(neiborAddPoint) || neiborAddPoint==chromosome.getId()){//若有重复或者选到了自己则重新插入
                         continue;
                     }
                     /***
                      * 双方都要插入（a是b的邻居，那么b也是a的邻居）
                      */
                     chromosome.getNlist().add(neiborAddPoint);//当前的染色体加入其他染色体作为邻居
-                    chromosome.getTrust().add(0.0);
+                    chromosome.getTrust().add(1.0);
 
                     list.get(neiborAddPoint).getNlist().add(list.indexOf(chromosome));//邻居把当前染色体加入
-                    list.get(neiborAddPoint).getTrust().add(0.0);
+                    list.get(neiborAddPoint).getTrust().add(1.0);
 
                 }
             }
         }
         GADecode.setAllScore(list);//重新计算score
+//        System.out.println(list);
     }
 
     /***
@@ -130,7 +137,9 @@ public class GAMutation {
      * @param neiborRatio （邻居比例）
      */
     public static void doMGAMutation(List<Chromosome> list,double Md,double neiborRatio){
-        int K=(int) (GAGetChromosomeLength.getLength(list.get(0))*0.1);//韩明重量的范围值
+//        System.out.println("种群大小："+list.size());
+//        int K=(int) (GAGetChromosomeLength.getLength(list.get(0))*0.1);//韩明重量的范围值
+        int K=2;
         for(Chromosome chromosome:list){//对染色体中的每一条染色体执行变异
             double ratio=Math.random();
             if(ratio<=Md){//与总体染色体变异概率相比较
@@ -148,7 +157,7 @@ public class GAMutation {
         }
         for (Chromosome chromosome:list){
             int ownScore=GADecode.getScore(chromosome);//获取自身的score
-            for(int i=0;i<chromosome.getNlist().size();i++){
+            for(int i=0;i<chromosome.getNlist().size();i++){//对于当前染色体的每一个邻居队列中的染色体进行检查
                 int neiborScore=GADecode.getScore(list.get(GAFindChromosomeById.findById(list,chromosome.getNlist().get(i))));
                 if(Math.abs(ownScore-neiborScore)<=K){//汉明距离在范围之内
                     //########################################可以做下实验，验证下 chromosome.getTrust().set(i,chromosome.getTrust().get(i))这样能否成功
@@ -166,10 +175,11 @@ public class GAMutation {
                 /**
                  * 在设置完信赖域之后，如果满足剔除条件的则剔除（同样双方都要剔除），然后随机选择新的染色体加入
                  */
-                if (chromosome.getTrust().get(i)<-1){
+                if (chromosome.getTrust().get(i)<-1){//第i个邻居的
                     int neiborNumber=chromosome.getNlist().get(i);
-                    chromosome.getNlist().remove(i);
+                    chromosome.getNlist().remove(i);//本染色体需要移除信赖值<-1的邻居，那么邻居也需要移除本染色体
                     chromosome.getTrust().remove(i);
+                    System.out.println("neiborNumber:"+neiborNumber+"    "+list.get(neiborNumber).getNlist().indexOf(chromosome.getId()));
                     list.get(neiborNumber).getTrust().remove(list.get(neiborNumber).getNlist().indexOf(chromosome.getId()));//得到i在Nlist中的下标，然后从邻居的Trust中移除
                     list.get(neiborNumber).getNlist().remove(chromosome.getId());
                 }
@@ -197,13 +207,14 @@ public class GAMutation {
         }
         GADecode.setAllScore(list);//重新计算score
     }
-    @Test
-    public  void test(){
+
+    public static void main(String[] args) {
         List<Chromosome> list = new ArrayList<Chromosome>();
         GATestTools.produceData(list,0.2);
         System.out.println(list);
 //        GAMutation.doMyGAMutation(list,1,10);
         System.out.println(list);
     }
+
 
 }

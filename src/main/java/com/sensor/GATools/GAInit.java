@@ -18,7 +18,8 @@ public class GAInit {
      * @param mergeNodeList（节点数）
      */
     public static void SGAInit(List<Chromosome> list, int population, List<MergeNode> mergeNodeList) {
-        for (int i = 0; i < population - 1; i++) {
+        int last=0;
+        for (int i = 0; i < population*0.9; i++) {
             Chromosome SGAChromosome = new Chromosome(i, 0);
             for (int j = 0; j < mergeNodeList.size(); j++) {
                 if (mergeNodeList.get(j).out != 0) {
@@ -28,25 +29,29 @@ public class GAInit {
                 }
             }
             list.add(SGAChromosome);
+            last=i;
         }
         /**
          * 添加全为1的染色体
          */
-        Chromosome add = new Chromosome(population - 1, 0);
-        for (int i = 0; i < mergeNodeList.size(); i++) {
-            if(mergeNodeList.get(i).out!=0) {
-                Gene gene = new Gene(mergeNodeList.get(i).id,mergeNodeList.get(i).in, mergeNodeList.get(i).out);
-                for (int out = 0; out < gene.getGeneOut(); out++) {
-                    Boolean[] in = new Boolean[gene.getGeneIn()];
-                    for (int gIn = 0; gIn < gene.getGeneIn(); gIn++) {
-                        in[gIn] = true;
+        for(int j=last+1;j<population;j++){
+
+            Chromosome add = new Chromosome(j, 0);
+            for (int i = 0; i < mergeNodeList.size(); i++) {
+                if(mergeNodeList.get(i).out!=0) {
+                    Gene gene = new Gene(mergeNodeList.get(i).id,mergeNodeList.get(i).in, mergeNodeList.get(i).out);
+                    for (int out = 0; out < gene.getGeneOut(); out++) {
+                        Boolean[] in = new Boolean[gene.getGeneIn()];
+                        for (int gIn = 0; gIn < gene.getGeneIn(); gIn++) {
+                            in[gIn] = true;
+                        }
+                        gene.getList().addAll(Arrays.asList(in));
                     }
-                    gene.getList().addAll(Arrays.asList(in));
+                    add.getList().add(gene);
                 }
-                add.getList().add(gene);
             }
+            list.add(add);
         }
-        list.add(add);
     }
 
     /***
@@ -57,7 +62,8 @@ public class GAInit {
      * @param ratio（个体初始化变异率）
      */
     public static void initPopulation(List<Chromosome> list, int population, List<MergeNode> mergeNodeList, double ratio) {
-        for (int i = 0; i < population; i++) {//初始化种群的染色体
+        int last=0;
+        for (int i = 0; i < population*0.9; i++) {//初始化种群的染色体
             Chromosome mchromosome = new Chromosome(i, ratio);
             for (int j = 0; j < mergeNodeList.size(); j++) {
                 if (mergeNodeList.get(j).out != 0) {
@@ -67,9 +73,36 @@ public class GAInit {
                 }
             }
             list.add(mchromosome);
+            last=i;
+        }
+
+        for(int j=last+1;j<population;j++){
+
+            Chromosome add = new Chromosome(j, 0);
+            for (int i = 0; i < mergeNodeList.size(); i++) {
+                if(mergeNodeList.get(i).out!=0) {
+                    Gene gene = new Gene(mergeNodeList.get(i).id,mergeNodeList.get(i).in, mergeNodeList.get(i).out);
+                    for (int out = 0; out < gene.getGeneOut(); out++) {
+                        Boolean[] in = new Boolean[gene.getGeneIn()];
+                        for (int gIn = 0; gIn < gene.getGeneIn(); gIn++) {
+                            in[gIn] = true;
+                        }
+                        gene.getList().addAll(Arrays.asList(in));
+                    }
+                    add.getList().add(gene);
+                }
+            }
+            list.add(add);
         }
     }
 
+    /***
+     * 作为测试，加入全为1的染色体，原则上这个时候网络要能达到最大流
+     * @param list
+     * @param population
+     * @param mergeNodeList
+     * @param ratio
+     */
     public static void testPopulation(List<Chromosome> list, int population, List<MergeNode> mergeNodeList, double ratio) {
         for (int i = 0; i < population; i++) {//初始化种群的染色体
             Chromosome mchromosome = new Chromosome(i, ratio);
@@ -96,8 +129,8 @@ public class GAInit {
      * @param neighborRatio（邻居占种群个数的比例）
      */
     public static void initNeighbor(List<Chromosome> list, double neighborRatio) {
-        int neighborNum = (int) Math.round(list.size() * neighborRatio);
-        for (Chromosome chromosome : list) {
+        int neighborNum = (int) Math.round(list.size() * neighborRatio);//获得染色体邻居队列的个数
+        for (Chromosome chromosome : list) {//对于染色体数组中的每一条染色体来说
             for (int i = 0; i < neighborNum; i++) {
                 int neibor = list.get((int) Math.floor(Math.random() * list.size())).getId();
                 addNeighborToChromosome(chromosome, neibor);

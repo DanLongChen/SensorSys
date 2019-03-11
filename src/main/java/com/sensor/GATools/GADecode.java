@@ -44,12 +44,8 @@ public class GADecode {//最后输出结果
             return;
         }
         int score = 0;
-        int i = 0;
         int count = 0;//中间计数器
-        if(GraphResolve.startresolve(GANetwork.getNetwork(),chromosome)){
-            score=Integer.MAX_VALUE;
-        }else{
-            for (Gene gene : chromosome.getList()) {
+        for (Gene gene : chromosome.getList()) {
             /*for (Boolean b : gene.getList()) {
                 if (b) {
                     score += 1;
@@ -57,21 +53,25 @@ public class GADecode {//最后输出结果
                     score += 0;
                 }
             }*/
-                for (i = 1; i <= gene.getList().size(); i++) {
-                    if (gene.getList().get(i - 1) == true) {
-                        count++;
-                    }
-                    if (count == 2) {
-                        score++;//有两个输入连接，就表示需要编码
-                        count=0;
-                        break;//跳出这次循环
-                    }
-                    if (i % gene.getGeneIn() == 0) {//计算第二个输出节点
-                        count = 0;
-                    }
+            for (int i = 0; i <gene.getList().size(); i++) {
+                if (gene.getList().get(i) == true) {
+                    count++;
                 }
+                if (count == 2) {
+                    score++;//有两个输入连接，就表示需要编码
+                    count = 0;
+                    break;//跳出这次循环
+                }
+//                if (i % gene.getGeneIn() == 0) {//计算第二个输出节点
+//                    count = 0;
+//                    System.out.println("lalal");
+//                }
             }
         }
+        if (GraphResolve.startresolve(GANetwork.getNetwork(), chromosome)) {//表明不是所有的接收节点都能达到最大流
+            score+=10000;
+        }
+
         chromosome.setScore(score);
     }
 
